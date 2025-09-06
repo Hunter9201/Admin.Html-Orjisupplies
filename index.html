@@ -1,218 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Product Manager (No-Code) – Orji Supplies</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Orji Admin – Upload Products</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root{--brand:#0ea5e9;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f8fafc;--ok:#16a34a;--bad:#ef4444}
+  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#0ea5e9;--ok:#16a34a;--bad:#ef4444}
   *{box-sizing:border-box}
-  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
-  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:40}
-  .nav{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px}
-  .brand{font-weight:800}
-  main{max-width:1100px;margin:0 auto;padding:16px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f8fafc;color:var(--ink)}
+  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  h1{font-size:22px;margin:8px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card header{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:800;background:#fff}
+  .card main{padding:14px}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  label{font-size:12px;color:var(--muted);font-weight:800;display:block;margin-bottom:6px}
-  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
-  textarea{min-height:84px}
-  .muted{color:var(--muted);font-size:12px}
-  .stack{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
-  .btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
-  .btn.bad{background:var(--bad);border-color:var(--bad);color:#fff}
-  .rowcard{display:grid;grid-template-columns:1.2fr .7fr .7fr .6fr .6fr 1.2fr 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px}
-  .imgsPreview{display:flex;gap:6px;flex-wrap:wrap}
-  .imgsPreview img{width:50px;height:50px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
-  .badge{display:inline-block;background:#e2f2ff;color:#075985;border:1px solid #bae6fd;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800}
-  @media (max-width:960px){.grid{grid-template-columns:1fr}}
-  @media (max-width:680px){.rowcard{grid-template-columns:1fr}}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  @media (max-width:640px){.row,.row3{grid-template-columns:1fr}}
+  label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff}
+  textarea{min-height:72px}
+  .stack{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
+  .primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .good{background:var(--ok);border-color:var(--ok);color:#fff}
+  .bad{background:var(--bad);border-color:var(--bad);color:#fff}
+  .help{font-size:12px;color:var(--muted)}
+  .list{padding:10px}
+  .item{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;gap:10px;align-items:flex-start;background:#fff;margin-bottom:10px}
+  .item img{width:80px;height:80px;object-fit:cover;border-radius:8px;background:#f1f5f9}
+  .thumbs{display:flex;gap:6px;flex-wrap:wrap}
+  .thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+  .muted{color:var(--muted)}
+  code{background:#0f172a10;padding:2px 6px;border-radius:6px}
 </style>
 </head>
 <body>
 <header>
-  <div class="nav">
-    <div class="brand">Product Manager (No-Code)</div>
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <strong>Orji Admin</strong>
     <div class="stack">
-      <button id="btnImport" class="btn">Import products.json</button>
-      <button id="btnExport" class="btn ok">Download products.json</button>
-      <button id="btnClear" class="btn bad">Clear local list</button>
+      <button id="exportBtn" class="button">Export JSON</button>
+      <label class="button">
+        Import JSON
+        <input id="importInput" type="file" accept="application/json" style="display:none">
+      </label>
+      <button id="clearBtn" class="button bad">Clear All</button>
     </div>
   </div>
 </header>
 
-<main>
-  <div class="card" style="margin-bottom:14px">
-    <div class="grid">
-      <div>
-        <h3 style="margin:0 0 10px">Add / Edit Product</h3>
-
+<div class="wrap">
+  <div class="grid">
+    <!-- FORM -->
+    <div class="card">
+      <header>Add / Update Product</header>
+      <main>
         <div class="row">
-          <div><label>Name</label><input id="name" placeholder="e.g., Harpic Power Plus 10X"></div>
           <div>
-            <label>Category</label>
-            <select id="category">
+            <label for="pId">Product ID (unique, no spaces)</label>
+            <input id="pId" placeholder="e.g., pBroom" />
+          </div>
+          <div>
+            <label for="pName">Name</label>
+            <input id="pName" placeholder="e.g., Assorted Color Broom Head" />
+          </div>
+        </div>
+        <div class="row3" style="margin-top:10px">
+          <div>
+            <label for="pRetail">Retail Price (UGX)</label>
+            <input id="pRetail" type="number" min="0" step="1" placeholder="15000" />
+          </div>
+          <div>
+            <label for="pWholesale">Wholesale Price (UGX)</label>
+            <input id="pWholesale" type="number" min="0" step="1" placeholder="12000" />
+          </div>
+          <div>
+            <label for="pMOQ">MOQ (wholesale min)</label>
+            <input id="pMOQ" type="number" min="1" step="1" value="1" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label for="pCategory">Category</label>
+            <select id="pCategory">
               <option value="laundry">Laundry</option>
               <option value="home">Home</option>
               <option value="accessories">Accessories</option>
               <option value="pest">Pest</option>
             </select>
           </div>
-        </div>
-
-        <div class="row">
-          <div><label>Unit</label><input id="unit" placeholder="e.g., bottle / piece / pack"></div>
-          <div><label>Tag (badge)</label><input id="tag" placeholder="e.g., Bestseller / Top Brand"></div>
-        </div>
-
-        <div class="row">
-          <div><label>Retail Price (UGX)</label><input id="retail" type="number" inputmode="numeric" placeholder="e.g., 16000"></div>
-          <div><label>Wholesale Price (UGX)</label><input id="wholesale" type="number" inputmode="numeric" placeholder="e.g., 14000"></div>
-        </div>
-
-        <div class="row">
-          <div><label>MOQ</label><input id="moq" type="number" inputmode="numeric" placeholder="e.g., 12"></div>
-          <div><label>Rating (0–5)</label><input id="rating" type="number" step="0.1" min="0" max="5" placeholder="e.g., 4.6"></div>
-        </div>
-
-        <div><label>Description</label><textarea id="desc" placeholder="Short description for the card"></textarea></div>
-      </div>
-
-      <div>
-        <h3 style="margin:0 0 10px">Images (1–4)</h3>
-        <div class="stack" style="margin-bottom:8px">
-          <input id="imgs" type="file" accept="image/*" multiple>
-          <span class="muted">Pick up to 4 images. They’ll be embedded in JSON (no external hosting needed).</span>
-        </div>
-        <div id="imgsPreview" class="imgsPreview"></div>
-
-        <div class="stack" style="margin-top:12px">
-          <button id="saveBtn" class="btn primary">Save / Update</button>
-          <button id="resetBtn" class="btn">Reset Form</button>
-        </div>
-        <div id="msg" class="muted" style="margin-top:6px"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3 style="margin:0 0 10px">Current Products <span id="count" class="badge">0</span></h3>
-    <div id="list" class="stack" style="flex-direction:column"></div>
-  </div>
-</main>
-
-<input id="importFile" type="file" accept="application/json" style="display:none">
-
-<script>
-  const LS_KEY = 'orji_products_v1';
-
-  const $ = s => document.querySelector(s);
-  function slugify(s){return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'item-'+Math.random().toString(36).slice(2,7);}
-
-  async function filesToDataURLs(list,max=4){
-    const files = Array.from(list||[]).slice(0,max);
-    const converts = files.map(f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f);})); 
-    return Promise.all(converts);
-  }
-
-  function fmtUGX(v){if(v==null||v==='')return '—'; try{return new Intl.NumberFormat('en-UG',{style:'currency',currency:'UGX',maximumFractionDigits:0}).format(v);}catch(_){return v;}}
-
-  let products = load();
-  let editing = -1;
-  let selectedImgs = [];
-
-  function load(){try{const raw=localStorage.getItem(LS_KEY);const arr=raw?JSON.parse(raw):[];return Array.isArray(arr)?arr:[]}catch(e){return []}}
-  function save(){localStorage.setItem(LS_KEY, JSON.stringify(products)); renderList();}
-
-  // form refs
-  const name=$('#name'), category=$('#category'), unit=$('#unit'), tag=$('#tag'), retail=$('#retail'), wholesale=$('#wholesale'), moq=$('#moq'), rating=$('#rating'), desc=$('#desc'), imgs=$('#imgs'), imgsPreview=$('#imgsPreview'), msg=$('#msg');
-
-  imgs.addEventListener('change', async (e)=>{selectedImgs = await filesToDataURLs(e.target.files,4); drawPreview();});
-  function drawPreview(){imgsPreview.innerHTML = selectedImgs.map(src=>`<img src="${src}">`).join('');}
-
-  function resetForm(){
-    editing=-1; name.value=''; category.value='home'; unit.value=''; tag.value='';
-    retail.value=''; wholesale.value=''; moq.value=''; rating.value=''; desc.value='';
-    imgs.value=''; selectedImgs=[]; drawPreview(); msg.textContent='';
-  }
-  $('#resetBtn').onclick=resetForm;
-
-  $('#saveBtn').onclick=()=>{
-    if(!name.value.trim()){ msg.textContent='Enter product name.'; return; }
-    const p={
-      id: slugify(name.value),
-      name: name.value.trim(),
-      category: category.value,
-      unit: unit.value.trim()||'piece',
-      tag: tag.value.trim()||undefined,
-      retailPrice: parseInt(retail.value||0,10),
-      wholesalePrice: parseInt(wholesale.value||0,10),
-      moq: parseInt(moq.value||1,10),
-      rating: rating.value? Number(rating.value): undefined,
-      desc: desc.value.trim(),
-      imgs: selectedImgs.length? selectedImgs.slice(0,4): []
-    };
-    if(!p.imgs.length){
-      // placeholder
-      p.imgs = ['data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="100%" height="100%" fill="#eef2f7"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="24" fill="#64748b">No Image</text></svg>')];
-    }
-    if(editing>=0){ products[editing]=p; msg.textContent='Updated.'; } else { products.unshift(p); msg.textContent='Added.'; }
-    save(); resetForm();
-  };
-
-  function renderList(){
-    $('#count').textContent = products.length;
-    const el = $('#list');
-    if(!products.length){ el.innerHTML = `<div class="muted">No products yet. Add some, then “Download products.json”.</div>`; return; }
-    el.innerHTML = products.map((p,i)=>`
-      <div class="rowcard">
-        <div><b>${p.name}</b><br><span class="muted">${p.id}</span></div>
-        <div>Retail: <b>${fmtUGX(p.retailPrice)}</b></div>
-        <div>Wholesale: <b>${fmtUGX(p.wholesalePrice)}</b></div>
-        <div>MOQ: <b>${p.moq||1}</b></div>
-        <div>${p.tag?`<span class="badge">${p.tag}</span>`:''}</div>
-        <div>${p.unit||'piece'}</div>
-        <div class="stack" style="align-items:center;justify-content:space-between">
-          <div class="imgsPreview">${(p.imgs||[]).slice(0,4).map(src=>`<img src="${src}">`).join('')}</div>
-          <div class="stack">
-            <button class="btn" onclick="edit(${i})">Edit</button>
-            <button class="btn bad" onclick="del(${i})">Delete</button>
+          <div>
+            <label for="pUnit">Unit</label>
+            <input id="pUnit" placeholder="piece, bottle, pack, set…" value="piece" />
           </div>
         </div>
-      </div>
-    `).join('');
+        <div style="margin-top:10px">
+          <label for="pDesc">Description</label>
+          <textarea id="pDesc" placeholder="Short description…"></textarea>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label for="pTag">Tag (optional)</label>
+            <input id="pTag" placeholder="e.g., Bestseller, Top Brand" />
+          </div>
+          <div>
+            <label for="pRating">Rating (1–5, optional)</label>
+            <input id="pRating" type="number" min="1" max="5" step="0.1" placeholder="4.6" />
+          </div>
+        </div>
+
+        <hr style="margin:14px 0;border:0;border-top:1px solid var(--line)">
+        <div>
+          <label>Images (upload 1–4) OR paste URLs (one per line)</label>
+          <div class="stack">
+            <input id="pImgs" type="file" accept="image/*" multiple />
+            <button id="clearImgs" class="button">Clear Images</button>
+          </div>
+          <div class="help" style="margin-top:6px">
+            • Uploading stores images as <strong>data URLs</strong> (works on GitHub Pages).<br>
+            • Or paste <strong>https URLs</strong> or plain filenames (e.g. <code>mop.jpg</code>) that exist in your shop repo’s <code>/images</code> folder.
+          </div>
+          <textarea id="pImgUrls" placeholder="https://.../img1.jpg
+https://.../img2.jpg
+mop.jpg" style="margin-top:8px"></textarea>
+
+          <div id="preview" class="thumbs" style="margin-top:8px"></div>
+        </div>
+
+        <div class="stack" style="margin-top:12px">
+          <button id="saveBtn" class="button primary">Save Product</button>
+          <button id="resetBtn" class="button">Reset Form</button>
+        </div>
+        <div class="help" style="margin-top:10px">Open your shop and refresh: <a href="https://hunter9201.github.io/Orji-Supplies/" target="_blank">Orji-Supplies</a>.</div>
+      </main>
+    </div>
+
+    <!-- LIST -->
+    <div class="card">
+      <header>Current Products</header>
+      <main class="list" id="list"></main>
+    </div>
+  </div>
+</div>
+
+<script>
+  const LS_KEY = 'ORJI_PRODUCTS_SYNC_V1';
+
+  // helpers
+  const $ = sel => document.querySelector(sel);
+  function loadProducts(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; } }
+  function saveProducts(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+  function upsertProduct(p){
+    const list = loadProducts();
+    const i = list.findIndex(x=>x.id===p.id);
+    if(i>=0) list[i] = p; else list.push(p);
+    saveProducts(list);
   }
+  function removeProduct(id){ saveProducts(loadProducts().filter(x=>x.id!==id)); }
+  function isUrl(s){ return /^(https?:|data:|blob:)/i.test(s); }
 
-  window.edit = (i)=>{
-    const p=products[i]; editing=i;
-    name.value=p.name||''; category.value=p.category||'home'; unit.value=p.unit||''; tag.value=p.tag||''; 
-    retail.value=p.retailPrice||''; wholesale.value=p.wholesalePrice||''; moq.value=p.moq||''; rating.value=p.rating??''; desc.value=p.desc||'';
-    selectedImgs = Array.isArray(p.imgs)? p.imgs.slice(0,4):[]; drawPreview(); window.scrollTo({top:0,behavior:'smooth'});
-  };
-  window.del = (i)=>{ if(confirm('Delete this product?')){ products.splice(i,1); save(); } };
+  // form refs
+  const pId=$('#pId'), pName=$('#pName'), pRetail=$('#pRetail'), pWholesale=$('#pWholesale'), pMOQ=$('#pMOQ');
+  const pCategory=$('#pCategory'), pUnit=$('#pUnit'), pDesc=$('#pDesc'), pTag=$('#pTag'), pRating=$('#pRating');
+  const pImgs=$('#pImgs'), pImgUrls=$('#pImgUrls'), preview=$('#preview');
+  const saveBtn=$('#saveBtn'), resetBtn=$('#resetBtn'), listEl=$('#list');
+  const clearBtn=$('#clearBtn'), exportBtn=$('#exportBtn'), importInput=$('#importInput'), clearImgs=$('#clearImgs');
 
-  // export/import/clear
-  $('#btnExport').onclick=()=>{
-    const data = JSON.stringify(products,null,2);
-    const blob = new Blob([data],{type:'application/json'}); const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob); a.download='products.json'; a.click(); URL.revokeObjectURL(a.href);
-  };
-  $('#btnImport').onclick=()=>$('#importFile').click();
-  $('#importFile').addEventListener('change', async e=>{
-    const f=e.target.files[0]; if(!f) return; try{
-      const text=await f.text(); const arr=JSON.parse(text);
-      if(!Array.isArray(arr)) throw new Error('Invalid file: expected an array');
-      if(!confirm('Replace current list with this file?')) return;
-      products=arr; save(); alert('Imported.');
-    }catch(err){ alert('Import failed: '+err.message); }
-    e.target.value='';
+  // images
+  let stagedImgs = [];
+  function renderPreview(){ preview.innerHTML = stagedImgs.map(src=>`<img src="${src}" alt="">`).join(''); }
+
+  pImgs.addEventListener('change', async (e)=>{
+    const files = [...e.target.files].slice(0,4);
+    const readers = files.map(f => new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f); }));
+    const dataUrls = await Promise.all(readers);
+    stagedImgs = [...stagedImgs, ...dataUrls].slice(0,4);
+    renderPreview();
   });
-  $('#btnClear').onclick=()=>{ if(confirm('Clear local product list from this browser?')){ products=[]; save(); } };
+
+  pImgUrls.addEventListener('input', ()=>{
+    const lines = pImgUrls.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    stagedImgs = [...lines, ...stagedImgs].slice(0,4);
+    renderPreview();
+  });
+
+  clearImgs.addEventListener('click', ()=>{ stagedImgs=[]; pImgUrls.value=''; pImgs.value=''; renderPreview(); });
+
+  // list
+  function renderList(){
+    const items = loadProducts();
+    if(!items.length){ listEl.innerHTML = `<div class="muted">No products yet. Add some on the left.</div>`; return; }
+    listEl.innerHTML = items.map(p=>{
+      const first = (p.imgs && p.imgs[0]) || p.img || '';
+      return `<div class="item">
+        <img src="${first||'data:'}" alt="">
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+            <strong>${p.name}</strong>
+            <div class="stack">
+              <button class="button" onclick="editItem('${p.id}')">Edit</button>
+              <button class="button bad" onclick="delItem('${p.id}')">Delete</button>
+            </div>
+          </div>
+          <div class="muted" style="margin:4px 0">${p.id} • ${p.category} • ${p.unit}</div>
+          <div><strong>UGX ${Number(p.retailPrice||0).toLocaleString()}</strong> (retail) • <strong>UGX ${Number(p.wholesalePrice||0).toLocaleString()}</strong> (wholesale, MOQ ${p.moq||1})</div>
+          <div class="thumbs" style="margin-top:6px">${(p.imgs||[p.img]).filter(Boolean).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  window.editItem = (id)=>{
+    const it = loadProducts().find(x=>x.id===id); if(!it) return;
+    pId.value=it.id; pName.value=it.name||''; pRetail.value=it.retailPrice||''; pWholesale.value=it.wholesalePrice||'';
+    pMOQ.value=it.moq||1; pCategory.value=it.category||'home'; pUnit.value=it.unit||'piece';
+    pDesc.value=it.desc||''; pTag.value=it.tag||''; pRating.value=it.rating||'';
+    stagedImgs = (it.imgs && it.imgs.length ? it.imgs : (it.img?[it.img]:[])).slice(0,4);
+    pImgUrls.value = stagedImgs.filter(u=>isUrl(u) && !u.startsWith('data:')).join('\n');
+    pImgs.value=''; renderPreview(); window.scrollTo({top:0,behavior:'smooth'});
+  };
+  window.delItem = (id)=>{ if(confirm('Delete this product?')){ removeProduct(id); renderList(); } };
+
+  // save/reset/clear/export/import
+  saveBtn.addEventListener('click', ()=>{
+    const product = {
+      id:(pId.value||'').trim(),
+      name:(pName.value||'').trim(),
+      retailPrice:Number(pRetail.value||0),
+      wholesalePrice:Number(pWholesale.value||0),
+      moq:Number(pMOQ.value||1),
+      category:(pCategory.value||'').trim(),
+      unit:(pUnit.value||'piece').trim(),
+      desc:(pDesc.value||'').trim(),
+      tag:(pTag.value||'').trim(),
+      rating:pRating.value?Number(pRating.value):undefined
+    };
+    if(!product.id || !product.name){ alert('ID and Name are required.'); return; }
+    const imgs = stagedImgs.filter(Boolean).slice(0,4);
+    if(imgs.length) product.imgs = imgs; // store array of images
+    upsertProduct(product);
+    alert('Saved!');
+    renderList();
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    [pId,pName,pRetail,pWholesale,pMOQ,pUnit,pDesc,pTag,pRating].forEach(el=>el.value='');
+    pCategory.value='home'; stagedImgs=[]; pImgs.value=''; pImgUrls.value=''; renderPreview();
+  });
+
+  clearBtn.addEventListener('click', ()=>{
+    if(!confirm('This removes ALL products from this browser storage. Continue?')) return;
+    localStorage.removeItem(LS_KEY); renderList();
+  });
+
+  exportBtn.addEventListener('click', ()=>{
+    const blob = new Blob([localStorage.getItem(LS_KEY)||'[]'], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='orji-products.json'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  importInput.addEventListener('change', async (e)=>{
+    const file = e.target.files?.[0]; if(!file) return;
+    try{
+      const text = await file.text();
+      const arr = JSON.parse(text);
+      if(!Array.isArray(arr)) throw new Error('Invalid products JSON');
+      saveProducts(arr); renderList(); alert('Imported!');
+    }catch(err){ alert('Import failed: '+err.message); }
+    importInput.value='';
+  });
 
   // init
   renderList();
