@@ -148,4 +148,4 @@
     "imgs": ["images/airfresh1.jpg"]
   }
 ]
-fetch('products.json')
+
