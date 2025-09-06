@@ -1,347 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<title>Orji Supplies — Admin (Upload to GitHub)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Orji Admin — Push to GitHub</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#0ea5e9;--ok:#16a34a;--bad:#ef4444}
-  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f8fafc;color:var(--ink)}
-  header{padding:14px 16px;border-bottom:1px solid var(--line);background:#fff}
-  h1{margin:0;font-size:20px}
-  .wrap{max-width:1100px;margin:16px auto;padding:0 16px;display:grid;grid-template-columns:320px 1fr;gap:16px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
-  label{font-weight:600;font-size:13px}
-  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-top:6px;font-size:14px}
+  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#0ea5e9;--ok:#16a34a;--bad:#ef4444;--card:#fff;--bg:#f8fafc}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:2fr 3fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card .body{padding:14px}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .stack{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:800;cursor:pointer}
+  label{font-weight:700;font-size:14px}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px}
+  .muted{color:var(--muted)}
+  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
   .primary{background:var(--brand);border-color:var(--brand);color:#fff}
-  .good{color:var(--ok)} .bad{color:var(--bad)}
-  .list{font-size:14px;color:var(--muted);max-height:320px;overflow:auto}
-  code{background:#f1f5f9;border:1px solid var(--line);padding:2px 6px;border-radius:6px}
-  .hint{font-size:12px;color:var(--muted)}
-  @media (max-width:900px){.wrap{grid-template-columns:1fr}}
+  .ok{background:var(--ok);border-color:var(--ok);color:#fff}
+  .bad{background:var(--bad);border-color:var(--bad);color:#fff}
+  .images{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .images .preview{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f8fafc}
+  .images img{width:100%;height:160px;object-fit:cover;display:block;background:#f1f5f9}
+  .images .rm{position:absolute;top:6px;right:6px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .tag{display:inline-block;background:#0ea5e90f;border:1px solid #bae6fd;color:#0369a1;font-weight:800;padding:3px 8px;border-radius:999px}
+  .small{font-size:12px}
+  .list{display:grid;gap:8px}
+  .list .item{border:1px dashed var(--line);border-radius:10px;padding:10px}
+  .code{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
 </style>
 </head>
 <body>
-<header><h1>Orji Admin — Update products.json in Orji-Supplies</h1></header>
+<header>
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <strong>Orji Supplies — Admin</strong>
+    <div class="bar">
+      <button id="setTokenBtn" class="button">Set GitHub Token</button>
+      <button id="clearTokenBtn" class="button bad">Clear Token</button>
+      <span id="tokenState" class="tag">No token</span>
+    </div>
+  </div>
+</header>
 
 <div class="wrap">
-  <!-- Settings -->
-  <div class="card">
-    <h3>GitHub Settings</h3>
-    <div class="row">
-      <div>
-        <label>Owner (username/org)
-          <input id="ghOwner" placeholder="hunter9201">
-        </label>
+  <div class="grid">
+    <!-- Left: Form -->
+    <div class="card">
+      <div class="body">
+        <h2 style="margin:0 0 10px">New Product</h2>
+        <div class="row">
+          <div>
+            <label>Product Name</label>
+            <input id="pName" placeholder="e.g., Harpic Power Plus 10X">
+          </div>
+          <div>
+            <label>Category</label>
+            <select id="pCat">
+              <option value="laundry">Laundry</option>
+              <option value="home">Home</option>
+              <option value="accessories">Accessories</option>
+              <option value="pest">Pest Control</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label>Retail Price (UGX)</label>
+            <input id="pRetail" type="number" placeholder="16000">
+          </div>
+          <div>
+            <label>Wholesale Price (UGX)</label>
+            <input id="pWholesale" type="number" placeholder="14000">
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label>Unit</label>
+            <input id="pUnit" placeholder="bottle / bag / pack">
+          </div>
+          <div>
+            <label>MOQ (wholesale)</label>
+            <input id="pMoq" type="number" placeholder="12" value="1">
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <label>Description</label>
+          <textarea id="pDesc" rows="3" placeholder="Short description..."></textarea>
+        </div>
+        <div style="margin-top:12px">
+          <label>Images (up to 4)</label>
+          <div class="bar" style="margin:6px 0">
+            <input id="fileInput" type="file" accept="image/*" multiple>
+            <button class="button" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+            <span class="muted small">Files will be uploaded to your repo’s <code>/images/</code> folder.</span>
+          </div>
+          <div id="imgGrid" class="images"></div>
+        </div>
+        <div class="bar" style="margin-top:14px">
+          <button id="publishBtn" class="button primary">Publish to GitHub</button>
+          <button id="resetBtn" class="button">Reset Form</button>
+        </div>
+        <div id="status" class="muted small" style="margin-top:8px"></div>
       </div>
-      <div>
-        <label>Repo (shop repo)
-          <input id="ghRepo" placeholder="Orji-Supplies">
-        </label>
-      </div>
-    </div>
-    <div class="row">
-      <div>
-        <label>Branch
-          <input id="ghBranch" placeholder="main" value="main">
-        </label>
-      </div>
-      <div>
-        <label>Images folder
-          <input id="imgDir" placeholder="images" value="images">
-        </label>
-      </div>
-    </div>
-    <label>GitHub Token (classic, scope: <code>public_repo</code>)
-      <input id="ghToken" type="password" placeholder="ghp_...">
-    </label>
-    <div class="stack">
-      <button class="button" onclick="saveCfg()">Save Settings</button>
-      <button class="button" onclick="loadCfg()">Load</button>
-      <span id="cfgMsg" class="hint"></span>
-    </div>
-    <hr>
-    <div class="stack">
-      <button class="button" onclick="previewProducts()">Preview products.json</button>
-      <button class="button" onclick="pullProducts()">Pull from GitHub</button>
-    </div>
-    <div id="pullStatus" class="hint" style="margin-top:6px"></div>
-    <div id="previewBox" class="list" style="margin-top:10px"></div>
-  </div>
-
-  <!-- Product form -->
-  <div class="card">
-    <h3>Add / Edit Product</h3>
-    <div class="row">
-      <div>
-        <label>Product ID
-          <input id="pId" placeholder="pUnique123">
-        </label>
-      </div>
-      <div>
-        <label>Name
-          <input id="pName" placeholder="Harpic Power Plus 10X (750ml)">
-        </label>
-      </div>
-    </div>
-    <div class="row">
-      <div>
-        <label>Retail Price (UGX)
-          <input id="pRetail" type="number" min="0" placeholder="16000">
-        </label>
-      </div>
-      <div>
-        <label>Wholesale Price (UGX)
-          <input id="pWholesale" type="number" min="0" placeholder="14000">
-        </label>
-      </div>
-    </div>
-    <div class="row">
-      <div>
-        <label>MOQ (for wholesale)
-          <input id="pMoq" type="number" min="1" value="12">
-        </label>
-      </div>
-      <div>
-        <label>Unit
-          <input id="pUnit" placeholder="bottle">
-        </label>
-      </div>
-    </div>
-    <div class="row">
-      <div>
-        <label>Category
-          <select id="pCat">
-            <option value="laundry">laundry</option>
-            <option value="home">home</option>
-            <option value="accessories">accessories</option>
-            <option value="pest">pest</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>Rating (e.g. 4.6)
-          <input id="pRating" type="number" min="0" max="5" step="0.1" value="4.6">
-        </label>
-      </div>
-    </div>
-    <label>Description
-      <textarea id="pDesc" rows="3" placeholder="Powerful toilet cleaner for tough stains and germs."></textarea>
-    </label>
-    <div class="row">
-      <div>
-        <label>Tag (optional)
-          <input id="pTag" placeholder="Bestseller">
-        </label>
-      </div>
-      <div>
-        <label>Image URLs (optional, comma-separated)
-          <input id="pImgUrls" placeholder="https://... , https://...">
-        </label>
-      </div>
-    </div>
-    <label>Or upload images (1–4)
-      <input id="pImgs" type="file" accept="image/*" multiple>
-    </label>
-    <div class="hint">If you choose files, they will be uploaded into <code>images/</code> of your shop repo and linked in products.json.</div>
-
-    <div class="stack">
-      <button class="button primary" onclick="addProduct()">Add to List</button>
-      <button class="button" onclick="clearForm()">Clear Form</button>
-      <span id="formMsg" class="hint"></span>
     </div>
 
-    <hr>
-    <h3>Current Products (staged)</h3>
-    <div id="stagedBox" class="list"></div>
-    <div class="stack">
-      <button class="button primary" onclick="pushToGitHub()">Save to GitHub (products.json + images)</button>
-      <span id="pushMsg" class="hint"></span>
+    <!-- Right: Last commits / preview -->
+    <div class="card">
+      <div class="body">
+        <h3 style="margin:0 0 10px">Last Published Product (local preview)</h3>
+        <div id="preview" class="list"></div>
+        <h4 style="margin:14px 0 6px">Debug Log</h4>
+        <div id="log" class="code"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  const CFG_KEY = 'ORJI_ADMIN_CFG_V1';
-  const RAW_JSON_PATH = 'products.json'; // stored at repo root
-  let staged = []; // products staged locally (in memory) for saving
+/* ======== EDIT THESE 5 LINES TO MATCH YOUR REPO ======== */
+const GH_OWNER = "hunter9201";
+const GH_REPO = "Orji-Supplies";
+const GH_BRANCH = "main";
+const GH_IMAGES_DIR = "images";          // folder in repo
+const GH_PRODUCTS_PATH = "products.json"; // file in repo root (or "data/products.json")
+/* ======================================================= */
 
-  function saveCfg(){
-    const cfg = {
-      owner: ghOwner.value.trim(),
-      repo: ghRepo.value.trim(),
-      branch: ghBranch.value.trim() || 'main',
-      imgDir: imgDir.value.trim() || 'images',
-      token: ghToken.value.trim()
+// Token storage key
+const TOKEN_KEY = "ORJI_GH_TOKEN_V1";
+
+// UI refs
+const tokenState = document.getElementById('tokenState');
+const setTokenBtn = document.getElementById('setTokenBtn');
+const clearTokenBtn = document.getElementById('clearTokenBtn');
+const fileInput = document.getElementById('fileInput');
+const imgGrid = document.getElementById('imgGrid');
+const publishBtn = document.getElementById('publishBtn');
+const resetBtn = document.getElementById('resetBtn');
+const statusEl = document.getElementById('status');
+const logEl = document.getElementById('log');
+const previewEl = document.getElementById('preview');
+
+// Form refs
+const pName = document.getElementById('pName');
+const pCat = document.getElementById('pCat');
+const pRetail = document.getElementById('pRetail');
+const pWholesale = document.getElementById('pWholesale');
+const pUnit = document.getElementById('pUnit');
+const pMoq = document.getElementById('pMoq');
+const pDesc = document.getElementById('pDesc');
+
+let files = []; // selected images
+
+function log(msg){ logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; }
+function setStatus(msg){ statusEl.textContent = msg; }
+function token(){ return localStorage.getItem(TOKEN_KEY) || ""; }
+function tokenOk(){ const t = token(); tokenState.textContent = t ? "Token set" : "No token"; tokenState.style.background = t ? "#dcfce7" : "#0ea5e90f"; }
+setTokenBtn.onclick = ()=>{ const t = prompt("Paste your GitHub Personal Access Token (fine-grained, contents: read/write):"); if (t) localStorage.setItem(TOKEN_KEY,t.trim()); tokenOk(); };
+clearTokenBtn.onclick = ()=>{ localStorage.removeItem(TOKEN_KEY); tokenOk(); };
+
+// file selection
+fileInput.addEventListener('change', (e)=>{
+  files = Array.from(e.target.files||[]).slice(0,4);
+  renderFiles();
+});
+function renderFiles(){
+  imgGrid.innerHTML = files.map((f,i)=>`
+    <div class="preview">
+      <img src="${URL.createObjectURL(f)}" alt="">
+      <button class="button bad rm small" onclick="removeFile(${i})">x</button>
+    </div>
+  `).join('') || '<span class="muted small">No files selected.</span>';
+}
+window.removeFile = (i)=>{ files.splice(i,1); renderFiles(); };
+
+// GitHub helpers
+const API_BASE = "https://api.github.com";
+function ghHeaders(){ return { "Authorization":"Bearer "+token(), "Accept":"application/vnd.github+json" }; }
+
+async function ghGetContents(path){
+  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(GH_BRANCH)}`;
+  const r = await fetch(url, {headers: ghHeaders()});
+  if (r.status === 404) return {status:404};
+  if (!r.ok) throw new Error(`GET ${path} failed: ${r.status} ${await r.text()}`);
+  return await r.json();
+}
+
+async function ghPutContents(path, base64Content, message, sha=null){
+  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}`;
+  const body = { message, content: base64Content, branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  const r = await fetch(url, {
+    method: "PUT",
+    headers: {...ghHeaders(), "Content-Type":"application/json"},
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(`PUT ${path} failed: ${r.status} ${await r.text()}`);
+  return await r.json();
+}
+
+function toBase64Utf8(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const fr = new FileReader();
+    fr.onload = ()=>{
+      const arr = new Uint8Array(fr.result);
+      let bin = "";
+      for (let i=0;i<arr.length;i++) bin += String.fromCharCode(arr[i]);
+      res(btoa(bin));
     };
-    localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
-    cfgMsg.textContent = 'Saved.';
-  }
-  function loadCfg(){
-    try{
-      const cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
-      ghOwner.value = cfg.owner||'';
-      ghRepo.value = cfg.repo||'';
-      ghBranch.value = cfg.branch||'main';
-      imgDir.value = cfg.imgDir||'images';
-      ghToken.value = cfg.token||'';
-      cfgMsg.textContent = 'Loaded.';
-    }catch(e){ cfgMsg.textContent='No saved settings.' }
-  }
-  loadCfg();
+    fr.onerror = ()=>rej(fr.error);
+    fr.readAsArrayBuffer(file);
+  });
+}
 
-  async function pullProducts(){
-    pullStatus.textContent = 'Fetching products.json from GitHub...';
-    try{
-      const url = `https://raw.githubusercontent.com/${ghOwner.value}/${ghRepo.value}/${ghBranch.value}/${RAW_JSON_PATH}`;
-      const r = await fetch(url, {cache:'no-store'});
-      if(!r.ok){ pullStatus.textContent = 'products.json not found yet (will be created on first push).'; previewBox.textContent=''; return; }
-      const data = await r.json();
-      staged = Array.isArray(data)? data : [];
-      pullStatus.textContent = `Loaded ${staged.length} products from GitHub.`;
-      renderStaged();
-      previewBox.textContent = JSON.stringify(staged, null, 2);
-    }catch(e){
-      pullStatus.textContent = 'Error fetching products.json';
-    }
-  }
+function slugify(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50) || "item"; }
 
-  function renderStaged(){
-    stagedBox.innerHTML = staged.length
-      ? staged.map(p=>`• <strong>${p.name}</strong> — UGX ${p.retailPrice} / ${p.unit||'piece'} ${p.imgs&&p.imgs.length?`<span class="hint">(${p.imgs.length} img)</span>`:''}`).join('<br>')
-      : '<em>No products staged yet.</em>';
-  }
-
-  function clearForm(){
-    pId.value=''; pName.value=''; pRetail.value=''; pWholesale.value='';
-    pMoq.value='12'; pUnit.value=''; pCat.value='laundry'; pRating.value='4.6';
-    pDesc.value=''; pTag.value=''; pImgUrls.value=''; pImgs.value='';
-    formMsg.textContent='';
-  }
-
-  function uniqueFileName(original){
-    const base = original.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9.\-]/g,'');
-    const stamp = Date.now().toString(36);
-    const parts = base.split('.');
-    const ext = parts.length>1 ? '.'+parts.pop() : '';
-    const stem = parts.join('.') || 'img';
-    return `${stem}-${stamp}${ext||'.jpg'}`;
-  }
-
-  async function fileToBase64(file){
-    const buf = await file.arrayBuffer();
-    let binary = '';
-    const bytes = new Uint8Array(buf);
-    const chunkSize = 0x8000;
-    for (let i=0;i<bytes.length;i+=chunkSize){
-      const chunk = bytes.subarray(i,i+chunkSize);
-      binary += String.fromCharCode.apply(null, chunk);
-    }
-    return btoa(binary);
-  }
-
-  function addProduct(){
-    const id = pId.value.trim();
+// Publish flow
+publishBtn.onclick = async ()=>{
+  try{
+    if (!token()){ alert("Set your GitHub token first."); return; }
     const name = pName.value.trim();
-    if(!id || !name){ formMsg.textContent='ID and Name are required.'; return; }
-    const prod = {
-      id,
-      name,
-      retailPrice: Number(pRetail.value||0),
-      wholesalePrice: Number(pWholesale.value||0),
-      moq: Number(pMoq.value||1),
-      category: pCat.value,
-      unit: pUnit.value||'piece',
-      desc: pDesc.value||'',
-      rating: Number(pRating.value||0) || undefined,
-      tag: pTag.value||undefined,
-      imgs: []
-    };
-    // URLs
-    const urls = (pImgUrls.value||'').split(',').map(s=>s.trim()).filter(Boolean);
-    prod.imgs.push(...urls);
-    // Files — we don't upload now; we stage them by keeping File objects in a temp map keyed by prod.id
-    const files = Array.from(pImgs.files||[]);
-    if(files.length){ prod._files = files; } // temp field used only at push
-    // Replace if same id exists
-    const idx = staged.findIndex(x=>x.id===id);
-    if(idx>=0) staged.splice(idx,1,prod); else staged.push(prod);
-    formMsg.textContent = 'Staged. Remember to "Save to GitHub".';
-    renderStaged();
-  }
+    if (!name){ alert("Enter product name."); return; }
+    if (!pRetail.value){ alert("Enter retail price."); return; }
 
-  async function pushToGitHub(){
-    const cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
-    if(!cfg.owner || !cfg.repo || !cfg.branch || !cfg.token){ pushMsg.textContent='Please fill GitHub settings and Save.'; return; }
-    pushMsg.textContent = 'Uploading images (if any)...';
+    setStatus("Uploading images...");
+    log("== Start publish ==");
+    const ts = Date.now();
+    const baseSlug = `${slugify(name)}-${ts}`;
+    const rawUrls = [];
 
-    // 1) Upload files to images/ and replace prod._files with relative paths
-    for (const prod of staged){
-      if(prod._files && prod._files.length){
-        for (const f of prod._files){
-          const filename = uniqueFileName(f.name||'image.jpg');
-          const path = `${cfg.imgDir}/${filename}`.replace(/\/+/g,'/');
-          const contentB64 = await fileToBase64(f);
-          const putUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`;
-          const putRes = await fetch(putUrl, {
-            method:'PUT',
-            headers:{'Authorization':`Bearer ${cfg.token}`,'Content-Type':'application/json'},
-            body: JSON.stringify({
-              message: `Add image ${filename}`,
-              content: contentB64,
-              branch: cfg.branch
-            })
-          });
-          if(!putRes.ok){
-            const txt = await putRes.text();
-            pushMsg.textContent = `Image upload failed: ${txt}`;
-            return;
-          }
-          // store relative path for shop (images/filename)
-          prod.imgs = prod.imgs || [];
-          prod.imgs.push(path);
-        }
-        delete prod._files;
-      }
+    // Ensure images dir exists (Contents API auto-creates on file put)
+    for (let i=0;i<files.length;i++){
+      const f = files[i];
+      const ext = (f.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'') || "bin";
+      const fname = `${baseSlug}-${i+1}.${ext}`;
+      const path = `${GH_IMAGES_DIR}/${fname}`;
+      const b64 = await fileToBase64(f);
+      const put = await ghPutContents(path, b64, `Upload image ${fname}`);
+      const url = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(GH_IMAGES_DIR)}/${encodeURIComponent(fname)}`;
+      rawUrls.push(url);
+      log(`Uploaded ${path}`);
+    }
+    if (rawUrls.length === 0){
+      // still allow publishing without images
+      log("No images selected; continuing.");
     }
 
-    // 2) Get current products.json sha (if exists)
-    pushMsg.textContent = 'Preparing products.json...';
+    setStatus("Updating products.json...");
+    // Get current products.json (404 => start with [])
+    let arr = [];
     let sha = null;
-    const getUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(RAW_JSON_PATH)}?ref=${encodeURIComponent(cfg.branch)}`;
-    const getRes = await fetch(getUrl, {headers:{'Authorization':`Bearer ${cfg.token}`}});
-    if(getRes.ok){
-      const meta = await getRes.json();
-      sha = meta.sha || null;
+    const got = await ghGetContents(GH_PRODUCTS_PATH);
+    if (got.status !== 404){
+      sha = got.sha;
+      const content = atob(got.content.replace(/\n/g,''));
+      const text = decodeURIComponent(escape(content));
+      try{ arr = JSON.parse(text); if (!Array.isArray(arr)) arr = []; } catch(e){ arr = []; }
+      log("Loaded existing products.json");
+    } else {
+      log("products.json does not exist; will create.");
     }
 
-    // 3) PUT products.json
-    const contentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(staged, null, 2))));
-    const putRes = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(RAW_JSON_PATH)}`, {
-      method:'PUT',
-      headers:{'Authorization':`Bearer ${cfg.token}`,'Content-Type':'application/json'},
-      body: JSON.stringify({
-        message: 'Update products.json',
-        content: contentB64,
-        branch: cfg.branch,
-        sha
-      })
-    });
-    if(!putRes.ok){
-      const txt = await putRes.text();
-      pushMsg.textContent = `products.json save failed: ${txt}`;
-      return;
-    }
-    pushMsg.innerHTML = `<span class="good">Done!</span> Your shop will read <code>${RAW_JSON_PATH}</code> and show these items on any device.`;
-  }
+    // Build product entry
+    const product = {
+      id: baseSlug,
+      name: name,
+      category: pCat.value,
+      retailPrice: Number(pRetail.value)||0,
+      wholesalePrice: Number(pWholesale.value)||0,
+      unit: pUnit.value.trim()||"piece",
+      moq: Number(pMoq.value)||1,
+      desc: pDesc.value.trim(),
+      imgs: rawUrls
+    };
+    arr.push(product);
 
-  function previewProducts(){
-    previewBox.textContent = JSON.stringify(staged, null, 2);
+    // Save products.json
+    const jsonStr = JSON.stringify(arr, null, 2);
+    const b64 = toBase64Utf8(jsonStr);
+    const putJson = await ghPutContents(GH_PRODUCTS_PATH, b64, `Add product ${product.id}`, sha||undefined);
+    log("products.json updated.");
+
+    setStatus("Done! Product published to GitHub.");
+    previewEl.innerHTML = `
+      <div class="item">
+        <div><strong>${product.name}</strong> — UGX ${product.retailPrice.toLocaleString('en-UG')}</div>
+        <div class="muted small">${product.desc||''}</div>
+        <div class="muted small">Images: ${product.imgs.length}</div>
+      </div>`;
+    alert("Published! Open your shop (index.html). If it’s already open, refresh it.");
+  }catch(err){
+    console.error(err);
+    log(String(err));
+    setStatus("Error: " + err.message);
+    alert("Publish failed:\n" + err.message);
   }
+};
+
+resetBtn.onclick = ()=>{
+  pName.value = ""; pRetail.value=""; pWholesale.value=""; pUnit.value=""; pMoq.value="1"; pDesc.value="";
+  files = []; renderFiles(); setStatus("");
+};
+
+tokenOk();
+renderFiles();
 </script>
 </body>
 </html>
