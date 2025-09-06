@@ -1,283 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Orji Admin – Upload Products</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orji Admin — Push to GitHub</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#0ea5e9;--ok:#16a34a;--bad:#ef4444}
-  *{box-sizing:border-box}
   body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f8fafc;color:var(--ink)}
-  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10}
-  .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  h1{font-size:22px;margin:8px 0}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media (max-width:860px){.grid{grid-template-columns:1fr}}
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .card header{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:800;background:#fff}
-  .card main{padding:14px}
+  header{padding:14px 16px;border-bottom:1px solid var(--line);background:#fff}
+  h1{margin:0;font-size:20px}
+  .wrap{max-width:1100px;margin:16px auto;padding:0 16px;display:grid;grid-template-columns:320px 1fr;gap:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+  label{font-weight:600;font-size:13px}
+  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-top:6px;font-size:14px}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  @media (max-width:640px){.row,.row3{grid-template-columns:1fr}}
-  label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff}
-  textarea{min-height:72px}
-  .stack{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
+  .stack{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:800;cursor:pointer}
   .primary{background:var(--brand);border-color:var(--brand);color:#fff}
-  .good{background:var(--ok);border-color:var(--ok);color:#fff}
-  .bad{background:var(--bad);border-color:var(--bad);color:#fff}
-  .help{font-size:12px;color:var(--muted)}
-  .list{padding:10px}
-  .item{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;gap:10px;align-items:flex-start;background:#fff;margin-bottom:10px}
-  .item img{width:80px;height:80px;object-fit:cover;border-radius:8px;background:#f1f5f9}
-  .thumbs{display:flex;gap:6px;flex-wrap:wrap}
-  .thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
-  .muted{color:var(--muted)}
-  code{background:#0f172a10;padding:2px 6px;border-radius:6px}
+  .good{color:var(--ok)} .bad{color:var(--bad)}
+  .list{font-size:14px;color:var(--muted);max-height:320px;overflow:auto}
+  code{background:#f1f5f9;border:1px solid var(--line);padding:2px 6px;border-radius:6px}
+  .hint{font-size:12px;color:var(--muted)}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-    <strong>Orji Admin</strong>
-    <div class="stack">
-      <button id="exportBtn" class="button">Export JSON</button>
-      <label class="button">
-        Import JSON
-        <input id="importInput" type="file" accept="application/json" style="display:none">
-      </label>
-      <button id="clearBtn" class="button bad">Clear All</button>
-    </div>
-  </div>
-</header>
+<header><h1>Orji Admin — Update products.json in Orji-Supplies</h1></header>
 
 <div class="wrap">
-  <div class="grid">
-    <!-- FORM -->
-    <div class="card">
-      <header>Add / Update Product</header>
-      <main>
-        <div class="row">
-          <div>
-            <label for="pId">Product ID (unique, no spaces)</label>
-            <input id="pId" placeholder="e.g., pBroom" />
-          </div>
-          <div>
-            <label for="pName">Name</label>
-            <input id="pName" placeholder="e.g., Assorted Color Broom Head" />
-          </div>
-        </div>
-        <div class="row3" style="margin-top:10px">
-          <div>
-            <label for="pRetail">Retail Price (UGX)</label>
-            <input id="pRetail" type="number" min="0" step="1" placeholder="15000" />
-          </div>
-          <div>
-            <label for="pWholesale">Wholesale Price (UGX)</label>
-            <input id="pWholesale" type="number" min="0" step="1" placeholder="12000" />
-          </div>
-          <div>
-            <label for="pMOQ">MOQ (wholesale min)</label>
-            <input id="pMOQ" type="number" min="1" step="1" value="1" />
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div>
-            <label for="pCategory">Category</label>
-            <select id="pCategory">
-              <option value="laundry">Laundry</option>
-              <option value="home">Home</option>
-              <option value="accessories">Accessories</option>
-              <option value="pest">Pest</option>
-            </select>
-          </div>
-          <div>
-            <label for="pUnit">Unit</label>
-            <input id="pUnit" placeholder="piece, bottle, pack, set…" value="piece" />
-          </div>
-        </div>
-        <div style="margin-top:10px">
-          <label for="pDesc">Description</label>
-          <textarea id="pDesc" placeholder="Short description…"></textarea>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div>
-            <label for="pTag">Tag (optional)</label>
-            <input id="pTag" placeholder="e.g., Bestseller, Top Brand" />
-          </div>
-          <div>
-            <label for="pRating">Rating (1–5, optional)</label>
-            <input id="pRating" type="number" min="1" max="5" step="0.1" placeholder="4.6" />
-          </div>
-        </div>
+  <!-- Settings -->
+  <div class="card">
+    <h3>GitHub Settings</h3>
+    <div class="row">
+      <div>
+        <label>Owner (username/org)
+          <input id="ghOwner" placeholder="hunter9201">
+        </label>
+      </div>
+      <div>
+        <label>Repo (shop repo)
+          <input id="ghRepo" placeholder="Orji-Supplies">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Branch
+          <input id="ghBranch" placeholder="main" value="main">
+        </label>
+      </div>
+      <div>
+        <label>Images folder
+          <input id="imgDir" placeholder="images" value="images">
+        </label>
+      </div>
+    </div>
+    <label>GitHub Token (classic, scope: <code>public_repo</code>)
+      <input id="ghToken" type="password" placeholder="ghp_...">
+    </label>
+    <div class="stack">
+      <button class="button" onclick="saveCfg()">Save Settings</button>
+      <button class="button" onclick="loadCfg()">Load</button>
+      <span id="cfgMsg" class="hint"></span>
+    </div>
+    <hr>
+    <div class="stack">
+      <button class="button" onclick="previewProducts()">Preview products.json</button>
+      <button class="button" onclick="pullProducts()">Pull from GitHub</button>
+    </div>
+    <div id="pullStatus" class="hint" style="margin-top:6px"></div>
+    <div id="previewBox" class="list" style="margin-top:10px"></div>
+  </div>
 
-        <hr style="margin:14px 0;border:0;border-top:1px solid var(--line)">
-        <div>
-          <label>Images (upload 1–4) OR paste URLs (one per line)</label>
-          <div class="stack">
-            <input id="pImgs" type="file" accept="image/*" multiple />
-            <button id="clearImgs" class="button">Clear Images</button>
-          </div>
-          <div class="help" style="margin-top:6px">
-            • Uploading stores images as <strong>data URLs</strong> (works on GitHub Pages).<br>
-            • Or paste <strong>https URLs</strong> or plain filenames (e.g. <code>mop.jpg</code>) that exist in your shop repo’s <code>/images</code> folder.
-          </div>
-          <textarea id="pImgUrls" placeholder="https://.../img1.jpg
-https://.../img2.jpg
-mop.jpg" style="margin-top:8px"></textarea>
+  <!-- Product form -->
+  <div class="card">
+    <h3>Add / Edit Product</h3>
+    <div class="row">
+      <div>
+        <label>Product ID
+          <input id="pId" placeholder="pUnique123">
+        </label>
+      </div>
+      <div>
+        <label>Name
+          <input id="pName" placeholder="Harpic Power Plus 10X (750ml)">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Retail Price (UGX)
+          <input id="pRetail" type="number" min="0" placeholder="16000">
+        </label>
+      </div>
+      <div>
+        <label>Wholesale Price (UGX)
+          <input id="pWholesale" type="number" min="0" placeholder="14000">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>MOQ (for wholesale)
+          <input id="pMoq" type="number" min="1" value="12">
+        </label>
+      </div>
+      <div>
+        <label>Unit
+          <input id="pUnit" placeholder="bottle">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Category
+          <select id="pCat">
+            <option value="laundry">laundry</option>
+            <option value="home">home</option>
+            <option value="accessories">accessories</option>
+            <option value="pest">pest</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>Rating (e.g. 4.6)
+          <input id="pRating" type="number" min="0" max="5" step="0.1" value="4.6">
+        </label>
+      </div>
+    </div>
+    <label>Description
+      <textarea id="pDesc" rows="3" placeholder="Powerful toilet cleaner for tough stains and germs."></textarea>
+    </label>
+    <div class="row">
+      <div>
+        <label>Tag (optional)
+          <input id="pTag" placeholder="Bestseller">
+        </label>
+      </div>
+      <div>
+        <label>Image URLs (optional, comma-separated)
+          <input id="pImgUrls" placeholder="https://... , https://...">
+        </label>
+      </div>
+    </div>
+    <label>Or upload images (1–4)
+      <input id="pImgs" type="file" accept="image/*" multiple>
+    </label>
+    <div class="hint">If you choose files, they will be uploaded into <code>images/</code> of your shop repo and linked in products.json.</div>
 
-          <div id="preview" class="thumbs" style="margin-top:8px"></div>
-        </div>
-
-        <div class="stack" style="margin-top:12px">
-          <button id="saveBtn" class="button primary">Save Product</button>
-          <button id="resetBtn" class="button">Reset Form</button>
-        </div>
-        <div class="help" style="margin-top:10px">Open your shop and refresh: <a href="https://hunter9201.github.io/Orji-Supplies/" target="_blank">Orji-Supplies</a>.</div>
-      </main>
+    <div class="stack">
+      <button class="button primary" onclick="addProduct()">Add to List</button>
+      <button class="button" onclick="clearForm()">Clear Form</button>
+      <span id="formMsg" class="hint"></span>
     </div>
 
-    <!-- LIST -->
-    <div class="card">
-      <header>Current Products</header>
-      <main class="list" id="list"></main>
+    <hr>
+    <h3>Current Products (staged)</h3>
+    <div id="stagedBox" class="list"></div>
+    <div class="stack">
+      <button class="button primary" onclick="pushToGitHub()">Save to GitHub (products.json + images)</button>
+      <span id="pushMsg" class="hint"></span>
     </div>
   </div>
 </div>
 
 <script>
-  const LS_KEY = 'ORJI_PRODUCTS_SYNC_V1';
+  const CFG_KEY = 'ORJI_ADMIN_CFG_V1';
+  const RAW_JSON_PATH = 'products.json'; // stored at repo root
+  let staged = []; // products staged locally (in memory) for saving
 
-  // helpers
-  const $ = sel => document.querySelector(sel);
-  function loadProducts(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; } }
-  function saveProducts(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
-  function upsertProduct(p){
-    const list = loadProducts();
-    const i = list.findIndex(x=>x.id===p.id);
-    if(i>=0) list[i] = p; else list.push(p);
-    saveProducts(list);
-  }
-  function removeProduct(id){ saveProducts(loadProducts().filter(x=>x.id!==id)); }
-  function isUrl(s){ return /^(https?:|data:|blob:)/i.test(s); }
-
-  // form refs
-  const pId=$('#pId'), pName=$('#pName'), pRetail=$('#pRetail'), pWholesale=$('#pWholesale'), pMOQ=$('#pMOQ');
-  const pCategory=$('#pCategory'), pUnit=$('#pUnit'), pDesc=$('#pDesc'), pTag=$('#pTag'), pRating=$('#pRating');
-  const pImgs=$('#pImgs'), pImgUrls=$('#pImgUrls'), preview=$('#preview');
-  const saveBtn=$('#saveBtn'), resetBtn=$('#resetBtn'), listEl=$('#list');
-  const clearBtn=$('#clearBtn'), exportBtn=$('#exportBtn'), importInput=$('#importInput'), clearImgs=$('#clearImgs');
-
-  // images
-  let stagedImgs = [];
-  function renderPreview(){ preview.innerHTML = stagedImgs.map(src=>`<img src="${src}" alt="">`).join(''); }
-
-  pImgs.addEventListener('change', async (e)=>{
-    const files = [...e.target.files].slice(0,4);
-    const readers = files.map(f => new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f); }));
-    const dataUrls = await Promise.all(readers);
-    stagedImgs = [...stagedImgs, ...dataUrls].slice(0,4);
-    renderPreview();
-  });
-
-  pImgUrls.addEventListener('input', ()=>{
-    const lines = pImgUrls.value.split('\n').map(s=>s.trim()).filter(Boolean);
-    stagedImgs = [...lines, ...stagedImgs].slice(0,4);
-    renderPreview();
-  });
-
-  clearImgs.addEventListener('click', ()=>{ stagedImgs=[]; pImgUrls.value=''; pImgs.value=''; renderPreview(); });
-
-  // list
-  function renderList(){
-    const items = loadProducts();
-    if(!items.length){ listEl.innerHTML = `<div class="muted">No products yet. Add some on the left.</div>`; return; }
-    listEl.innerHTML = items.map(p=>{
-      const first = (p.imgs && p.imgs[0]) || p.img || '';
-      return `<div class="item">
-        <img src="${first||'data:'}" alt="">
-        <div style="flex:1">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-            <strong>${p.name}</strong>
-            <div class="stack">
-              <button class="button" onclick="editItem('${p.id}')">Edit</button>
-              <button class="button bad" onclick="delItem('${p.id}')">Delete</button>
-            </div>
-          </div>
-          <div class="muted" style="margin:4px 0">${p.id} • ${p.category} • ${p.unit}</div>
-          <div><strong>UGX ${Number(p.retailPrice||0).toLocaleString()}</strong> (retail) • <strong>UGX ${Number(p.wholesalePrice||0).toLocaleString()}</strong> (wholesale, MOQ ${p.moq||1})</div>
-          <div class="thumbs" style="margin-top:6px">${(p.imgs||[p.img]).filter(Boolean).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-  window.editItem = (id)=>{
-    const it = loadProducts().find(x=>x.id===id); if(!it) return;
-    pId.value=it.id; pName.value=it.name||''; pRetail.value=it.retailPrice||''; pWholesale.value=it.wholesalePrice||'';
-    pMOQ.value=it.moq||1; pCategory.value=it.category||'home'; pUnit.value=it.unit||'piece';
-    pDesc.value=it.desc||''; pTag.value=it.tag||''; pRating.value=it.rating||'';
-    stagedImgs = (it.imgs && it.imgs.length ? it.imgs : (it.img?[it.img]:[])).slice(0,4);
-    pImgUrls.value = stagedImgs.filter(u=>isUrl(u) && !u.startsWith('data:')).join('\n');
-    pImgs.value=''; renderPreview(); window.scrollTo({top:0,behavior:'smooth'});
-  };
-  window.delItem = (id)=>{ if(confirm('Delete this product?')){ removeProduct(id); renderList(); } };
-
-  // save/reset/clear/export/import
-  saveBtn.addEventListener('click', ()=>{
-    const product = {
-      id:(pId.value||'').trim(),
-      name:(pName.value||'').trim(),
-      retailPrice:Number(pRetail.value||0),
-      wholesalePrice:Number(pWholesale.value||0),
-      moq:Number(pMOQ.value||1),
-      category:(pCategory.value||'').trim(),
-      unit:(pUnit.value||'piece').trim(),
-      desc:(pDesc.value||'').trim(),
-      tag:(pTag.value||'').trim(),
-      rating:pRating.value?Number(pRating.value):undefined
+  function saveCfg(){
+    const cfg = {
+      owner: ghOwner.value.trim(),
+      repo: ghRepo.value.trim(),
+      branch: ghBranch.value.trim() || 'main',
+      imgDir: imgDir.value.trim() || 'images',
+      token: ghToken.value.trim()
     };
-    if(!product.id || !product.name){ alert('ID and Name are required.'); return; }
-    const imgs = stagedImgs.filter(Boolean).slice(0,4);
-    if(imgs.length) product.imgs = imgs; // store array of images
-    upsertProduct(product);
-    alert('Saved!');
-    renderList();
-  });
-
-  resetBtn.addEventListener('click', ()=>{
-    [pId,pName,pRetail,pWholesale,pMOQ,pUnit,pDesc,pTag,pRating].forEach(el=>el.value='');
-    pCategory.value='home'; stagedImgs=[]; pImgs.value=''; pImgUrls.value=''; renderPreview();
-  });
-
-  clearBtn.addEventListener('click', ()=>{
-    if(!confirm('This removes ALL products from this browser storage. Continue?')) return;
-    localStorage.removeItem(LS_KEY); renderList();
-  });
-
-  exportBtn.addEventListener('click', ()=>{
-    const blob = new Blob([localStorage.getItem(LS_KEY)||'[]'], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='orji-products.json'; a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  importInput.addEventListener('change', async (e)=>{
-    const file = e.target.files?.[0]; if(!file) return;
+    localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+    cfgMsg.textContent = 'Saved.';
+  }
+  function loadCfg(){
     try{
-      const text = await file.text();
-      const arr = JSON.parse(text);
-      if(!Array.isArray(arr)) throw new Error('Invalid products JSON');
-      saveProducts(arr); renderList(); alert('Imported!');
-    }catch(err){ alert('Import failed: '+err.message); }
-    importInput.value='';
-  });
+      const cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+      ghOwner.value = cfg.owner||'';
+      ghRepo.value = cfg.repo||'';
+      ghBranch.value = cfg.branch||'main';
+      imgDir.value = cfg.imgDir||'images';
+      ghToken.value = cfg.token||'';
+      cfgMsg.textContent = 'Loaded.';
+    }catch(e){ cfgMsg.textContent='No saved settings.' }
+  }
+  loadCfg();
 
-  // init
-  renderList();
+  async function pullProducts(){
+    pullStatus.textContent = 'Fetching products.json from GitHub...';
+    try{
+      const url = `https://raw.githubusercontent.com/${ghOwner.value}/${ghRepo.value}/${ghBranch.value}/${RAW_JSON_PATH}`;
+      const r = await fetch(url, {cache:'no-store'});
+      if(!r.ok){ pullStatus.textContent = 'products.json not found yet (will be created on first push).'; previewBox.textContent=''; return; }
+      const data = await r.json();
+      staged = Array.isArray(data)? data : [];
+      pullStatus.textContent = `Loaded ${staged.length} products from GitHub.`;
+      renderStaged();
+      previewBox.textContent = JSON.stringify(staged, null, 2);
+    }catch(e){
+      pullStatus.textContent = 'Error fetching products.json';
+    }
+  }
+
+  function renderStaged(){
+    stagedBox.innerHTML = staged.length
+      ? staged.map(p=>`• <strong>${p.name}</strong> — UGX ${p.retailPrice} / ${p.unit||'piece'} ${p.imgs&&p.imgs.length?`<span class="hint">(${p.imgs.length} img)</span>`:''}`).join('<br>')
+      : '<em>No products staged yet.</em>';
+  }
+
+  function clearForm(){
+    pId.value=''; pName.value=''; pRetail.value=''; pWholesale.value='';
+    pMoq.value='12'; pUnit.value=''; pCat.value='laundry'; pRating.value='4.6';
+    pDesc.value=''; pTag.value=''; pImgUrls.value=''; pImgs.value='';
+    formMsg.textContent='';
+  }
+
+  function uniqueFileName(original){
+    const base = original.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9.\-]/g,'');
+    const stamp = Date.now().toString(36);
+    const parts = base.split('.');
+    const ext = parts.length>1 ? '.'+parts.pop() : '';
+    const stem = parts.join('.') || 'img';
+    return `${stem}-${stamp}${ext||'.jpg'}`;
+  }
+
+  async function fileToBase64(file){
+    const buf = await file.arrayBuffer();
+    let binary = '';
+    const bytes = new Uint8Array(buf);
+    const chunkSize = 0x8000;
+    for (let i=0;i<bytes.length;i+=chunkSize){
+      const chunk = bytes.subarray(i,i+chunkSize);
+      binary += String.fromCharCode.apply(null, chunk);
+    }
+    return btoa(binary);
+  }
+
+  function addProduct(){
+    const id = pId.value.trim();
+    const name = pName.value.trim();
+    if(!id || !name){ formMsg.textContent='ID and Name are required.'; return; }
+    const prod = {
+      id,
+      name,
+      retailPrice: Number(pRetail.value||0),
+      wholesalePrice: Number(pWholesale.value||0),
+      moq: Number(pMoq.value||1),
+      category: pCat.value,
+      unit: pUnit.value||'piece',
+      desc: pDesc.value||'',
+      rating: Number(pRating.value||0) || undefined,
+      tag: pTag.value||undefined,
+      imgs: []
+    };
+    // URLs
+    const urls = (pImgUrls.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+    prod.imgs.push(...urls);
+    // Files — we don't upload now; we stage them by keeping File objects in a temp map keyed by prod.id
+    const files = Array.from(pImgs.files||[]);
+    if(files.length){ prod._files = files; } // temp field used only at push
+    // Replace if same id exists
+    const idx = staged.findIndex(x=>x.id===id);
+    if(idx>=0) staged.splice(idx,1,prod); else staged.push(prod);
+    formMsg.textContent = 'Staged. Remember to "Save to GitHub".';
+    renderStaged();
+  }
+
+  async function pushToGitHub(){
+    const cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+    if(!cfg.owner || !cfg.repo || !cfg.branch || !cfg.token){ pushMsg.textContent='Please fill GitHub settings and Save.'; return; }
+    pushMsg.textContent = 'Uploading images (if any)...';
+
+    // 1) Upload files to images/ and replace prod._files with relative paths
+    for (const prod of staged){
+      if(prod._files && prod._files.length){
+        for (const f of prod._files){
+          const filename = uniqueFileName(f.name||'image.jpg');
+          const path = `${cfg.imgDir}/${filename}`.replace(/\/+/g,'/');
+          const contentB64 = await fileToBase64(f);
+          const putUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`;
+          const putRes = await fetch(putUrl, {
+            method:'PUT',
+            headers:{'Authorization':`Bearer ${cfg.token}`,'Content-Type':'application/json'},
+            body: JSON.stringify({
+              message: `Add image ${filename}`,
+              content: contentB64,
+              branch: cfg.branch
+            })
+          });
+          if(!putRes.ok){
+            const txt = await putRes.text();
+            pushMsg.textContent = `Image upload failed: ${txt}`;
+            return;
+          }
+          // store relative path for shop (images/filename)
+          prod.imgs = prod.imgs || [];
+          prod.imgs.push(path);
+        }
+        delete prod._files;
+      }
+    }
+
+    // 2) Get current products.json sha (if exists)
+    pushMsg.textContent = 'Preparing products.json...';
+    let sha = null;
+    const getUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(RAW_JSON_PATH)}?ref=${encodeURIComponent(cfg.branch)}`;
+    const getRes = await fetch(getUrl, {headers:{'Authorization':`Bearer ${cfg.token}`}});
+    if(getRes.ok){
+      const meta = await getRes.json();
+      sha = meta.sha || null;
+    }
+
+    // 3) PUT products.json
+    const contentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(staged, null, 2))));
+    const putRes = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(RAW_JSON_PATH)}`, {
+      method:'PUT',
+      headers:{'Authorization':`Bearer ${cfg.token}`,'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: 'Update products.json',
+        content: contentB64,
+        branch: cfg.branch,
+        sha
+      })
+    });
+    if(!putRes.ok){
+      const txt = await putRes.text();
+      pushMsg.textContent = `products.json save failed: ${txt}`;
+      return;
+    }
+    pushMsg.innerHTML = `<span class="good">Done!</span> Your shop will read <code>${RAW_JSON_PATH}</code> and show these items on any device.`;
+  }
+
+  function previewProducts(){
+    previewBox.textContent = JSON.stringify(staged, null, 2);
+  }
 </script>
 </body>
 </html>
