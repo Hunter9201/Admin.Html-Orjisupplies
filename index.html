@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,11 +108,21 @@
       </div>
     </div>
 
-    <!-- Right: Last commits / preview -->
+    <!-- Right: Manage + preview + log -->
     <div class="card">
       <div class="body">
-        <h3 style="margin:0 0 10px">Last Published Product (local preview)</h3>
+        <h3 style="margin:0 0 10px">Manage Products (GitHub)</h3>
+        <div class="bar" style="margin-bottom:8px">
+          <button id="refreshBtn" class="button">Refresh List</button>
+          <label class="small" title="If checked, deleting a product will also remove its images from /images/">
+            <input type="checkbox" id="delImagesToggle"> also delete images
+          </label>
+        </div>
+        <div id="prodList" class="list"></div>
+
+        <h3 style="margin:16px 0 10px">Last Published Product (local preview)</h3>
         <div id="preview" class="list"></div>
+
         <h4 style="margin:14px 0 6px">Debug Log</h4>
         <div id="log" class="code"></div>
       </div>
@@ -142,6 +153,10 @@ const resetBtn = document.getElementById('resetBtn');
 const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const previewEl = document.getElementById('preview');
+
+const refreshBtn = document.getElementById('refreshBtn');
+const prodList = document.getElementById('prodList');
+const delImagesToggle = document.getElementById('delImagesToggle');
 
 // Form refs
 const pName = document.getElementById('pName');
@@ -185,7 +200,7 @@ async function ghGetContents(path){
   const r = await fetch(url, {headers: ghHeaders()});
   if (r.status === 404) return {status:404};
   if (!r.ok) throw new Error(`GET ${path} failed: ${r.status} ${await r.text()}`);
-  return await r.json();
+  return await r.json(); // includes .sha, .content (base64) for files
 }
 
 async function ghPutContents(path, base64Content, message, sha=null){
@@ -198,6 +213,18 @@ async function ghPutContents(path, base64Content, message, sha=null){
     body: JSON.stringify(body)
   });
   if (!r.ok) throw new Error(`PUT ${path} failed: ${r.status} ${await r.text()}`);
+  return await r.json();
+}
+
+// NEW: delete a file at path (needs current file SHA)
+async function ghDeleteContents(path, message, sha){
+  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}`;
+  const r = await fetch(url, {
+    method: "DELETE",
+    headers: {...ghHeaders(), "Content-Type":"application/json"},
+    body: JSON.stringify({ message, sha, branch: GH_BRANCH })
+  });
+  if (!r.ok) throw new Error(`DELETE ${path} failed: ${r.status} ${await r.text()}`);
   return await r.json();
 }
 
@@ -220,7 +247,7 @@ function fileToBase64(file){
 
 function slugify(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50) || "item"; }
 
-// Publish flow
+// ===== PUBLISH flow (unchanged) =====
 publishBtn.onclick = async ()=>{
   try{
     if (!token()){ alert("Set your GitHub token first."); return; }
@@ -234,25 +261,20 @@ publishBtn.onclick = async ()=>{
     const baseSlug = `${slugify(name)}-${ts}`;
     const rawUrls = [];
 
-    // Ensure images dir exists (Contents API auto-creates on file put)
     for (let i=0;i<files.length;i++){
       const f = files[i];
       const ext = (f.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'') || "bin";
       const fname = `${baseSlug}-${i+1}.${ext}`;
       const path = `${GH_IMAGES_DIR}/${fname}`;
       const b64 = await fileToBase64(f);
-      const put = await ghPutContents(path, b64, `Upload image ${fname}`);
+      await ghPutContents(path, b64, `Upload image ${fname}`);
       const url = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(GH_IMAGES_DIR)}/${encodeURIComponent(fname)}`;
       rawUrls.push(url);
       log(`Uploaded ${path}`);
     }
-    if (rawUrls.length === 0){
-      // still allow publishing without images
-      log("No images selected; continuing.");
-    }
+    if (rawUrls.length === 0){ log("No images selected; continuing."); }
 
     setStatus("Updating products.json...");
-    // Get current products.json (404 => start with [])
     let arr = [];
     let sha = null;
     const got = await ghGetContents(GH_PRODUCTS_PATH);
@@ -266,10 +288,9 @@ publishBtn.onclick = async ()=>{
       log("products.json does not exist; will create.");
     }
 
-    // Build product entry
     const product = {
       id: baseSlug,
-      name: name,
+      name,
       category: pCat.value,
       retailPrice: Number(pRetail.value)||0,
       wholesalePrice: Number(pWholesale.value)||0,
@@ -280,10 +301,9 @@ publishBtn.onclick = async ()=>{
     };
     arr.push(product);
 
-    // Save products.json
     const jsonStr = JSON.stringify(arr, null, 2);
     const b64 = toBase64Utf8(jsonStr);
-    const putJson = await ghPutContents(GH_PRODUCTS_PATH, b64, `Add product ${product.id}`, sha||undefined);
+    await ghPutContents(GH_PRODUCTS_PATH, b64, `Add product ${product.id}`, sha||undefined);
     log("products.json updated.");
 
     setStatus("Done! Product published to GitHub.");
@@ -294,6 +314,8 @@ publishBtn.onclick = async ()=>{
         <div class="muted small">Images: ${product.imgs.length}</div>
       </div>`;
     alert("Published! Open your shop (index.html). If it’s already open, refresh it.");
+    // Refresh product list after publish
+    await refreshProductsList();
   }catch(err){
     console.error(err);
     log(String(err));
@@ -307,8 +329,116 @@ resetBtn.onclick = ()=>{
   files = []; renderFiles(); setStatus("");
 };
 
+// ===== MANAGE (Delete) =====
+function filenameFromRawUrl(u){
+  try{
+    const url = new URL(u);
+    const name = url.pathname.split('/').pop() || "";
+    return decodeURIComponent(name);
+  }catch{ return ""; }
+}
+
+function renderProductsAdmin(arr){
+  if (!Array.isArray(arr) || !arr.length){
+    prodList.innerHTML = '<div class="muted small">No products found in products.json.</div>';
+    return;
+  }
+  prodList.innerHTML = arr.map(p=>`
+    <div class="item" data-id="${p.id}">
+      <div class="bar" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <div><strong>${p.name}</strong> <span class="muted small">(${p.id})</span></div>
+          <div class="muted small">Cat: ${p.category||'-'} • Retail: UGX ${(p.retailPrice||0).toLocaleString('en-UG')} • Images: ${(p.imgs||[]).length}</div>
+          <div class="muted small">${p.desc ? p.desc.slice(0,120) : ''}</div>
+        </div>
+        <div class="bar">
+          <button class="button bad" data-action="delete" data-id="${p.id}">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadProductsJson(){
+  const got = await ghGetContents(GH_PRODUCTS_PATH);
+  if (got.status === 404) return { arr: [], sha: null };
+  const sha = got.sha;
+  const content = atob(got.content.replace(/\n/g,''));
+  const text = decodeURIComponent(escape(content));
+  let arr = [];
+  try{ arr = JSON.parse(text); if (!Array.isArray(arr)) arr = []; } catch(e){ arr = []; }
+  return { arr, sha };
+}
+
+async function refreshProductsList(){
+  try{
+    setStatus("Loading products from GitHub…");
+    const { arr } = await loadProductsJson();
+    renderProductsAdmin(arr);
+    setStatus("Ready.");
+  }catch(err){
+    log("Load list error: " + err.message);
+    setStatus("Error loading list.");
+  }
+}
+
+async function deleteProduct(productId, alsoDeleteImages){
+  if (!token()){ alert("Set your GitHub token first."); return; }
+  if (!confirm(`Delete product "${productId}"${alsoDeleteImages ? " and its images" : ""}? This cannot be undone.`)) return;
+
+  setStatus("Deleting…");
+  log(`== Delete ${productId} ==`);
+  const { arr, sha } = await loadProductsJson();
+  const idx = arr.findIndex(p => p.id === productId);
+  if (idx === -1){ alert("Product not found."); return; }
+  const product = arr[idx];
+
+  // Optionally delete images
+  if (alsoDeleteImages && Array.isArray(product.imgs)){
+    for (const u of product.imgs){
+      const fname = filenameFromRawUrl(u);
+      if (!fname) { log(`Skip image (no filename): ${u}`); continue; }
+      const path = `${GH_IMAGES_DIR}/${fname}`;
+      try{
+        const got = await ghGetContents(path);
+        if (got.status === 404){ log(`Image not found in repo: ${path}`); continue; }
+        await ghDeleteContents(path, `Delete image ${fname} (product ${productId})`, got.sha);
+        log(`Deleted image: ${path}`);
+      }catch(e){
+        log(`Failed to delete image ${path}: ${e.message}`);
+      }
+    }
+  }
+
+  // Remove product from array and write back
+  const newArr = arr.filter(p => p.id !== productId);
+  const jsonStr = JSON.stringify(newArr, null, 2);
+  const b64 = toBase64Utf8(jsonStr);
+  await ghPutContents(GH_PRODUCTS_PATH, b64, `Delete product ${productId}`, sha||undefined);
+  log(`Removed ${productId} from products.json`);
+  setStatus("Deleted.");
+
+  await refreshProductsList();
+}
+
+// Wire up UI
+refreshBtn.addEventListener('click', refreshProductsList);
+prodList.addEventListener('click', async (e)=>{
+  const btn = e.target.closest('button[data-action="delete"]');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const also = !!delImagesToggle.checked;
+  try{
+    await deleteProduct(id, also);
+  }catch(err){
+    log("Delete error: " + err.message);
+    alert("Delete failed:\n" + err.message);
+  }
+});
+
 tokenOk();
 renderFiles();
+refreshProductsList(); // load list on open
 </script>
 </body>
 </html>
