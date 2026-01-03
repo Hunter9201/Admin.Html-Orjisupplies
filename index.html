@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +31,94 @@
   .list{display:grid;gap:8px}
   .list .item{border:1px dashed var(--line);border-radius:10px;padding:10px}
   .code{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+  
+  /* Token modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .modal-content h3 {
+    margin: 0 0 16px 0;
+  }
+  
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .token-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: ui-monospace, monospace;
+    margin-bottom: 8px;
+  }
+  
+  .instruction {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  
+  .instruction strong {
+    color: var(--ink);
+  }
+  
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .row {
+      grid-template-columns: 1fr;
+    }
+    
+    .images {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .images img {
+      height: 120px;
+    }
+    
+    .modal-content {
+      padding: 20px;
+    }
+    
+    .modal-actions {
+      flex-direction: column;
+    }
+    
+    .modal-actions .button {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
@@ -60,10 +147,19 @@
           <div>
             <label>Category</label>
             <select id="pCat">
-              <option value="laundry">Laundry</option>
-              <option value="home">Home</option>
-              <option value="accessories">Accessories</option>
+              <option value="laundry">Laundry & Detergents</option>
+              <option value="cleaning">Cleaning Products</option>
               <option value="pest">Pest Control</option>
+              <option value="home">Home & Kitchen</option>
+              <option value="personal">Personal Care</option>
+              <option value="baby">Baby Care</option>
+              <option value="drinks">Drinks & Beverages</option>
+              <option value="food">Food Items</option>
+              <option value="stationery">Stationery & Office</option>
+              <option value="auto">Auto Care</option>
+              <option value="fashion">Fashion & Accessories</option>
+              <option value="electronics">Electronics</option>
+              <option value="books">Books & Education</option>
             </select>
           </div>
         </div>
@@ -96,7 +192,7 @@
           <div class="bar" style="margin:6px 0">
             <input id="fileInput" type="file" accept="image/*" multiple>
             <button class="button" onclick="document.getElementById('fileInput').click()">Choose Files</button>
-            <span class="muted small">Files will be uploaded to your repo’s <code>/images/</code> folder.</span>
+            <span class="muted small">Files will be uploaded to your repo's <code>/images/</code> folder.</span>
           </div>
           <div id="imgGrid" class="images"></div>
         </div>
@@ -130,6 +226,33 @@
   </div>
 </div>
 
+<!-- Token Modal -->
+<div id="tokenModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <h3>Set GitHub Token</h3>
+    <p>Paste your GitHub Personal Access Token below:</p>
+    <textarea id="tokenInput" class="token-input" rows="4" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    
+    <div class="instruction">
+      <p><strong>How to get a token:</strong></p>
+      <ol style="margin: 8px 0 8px 20px; padding: 0;">
+        <li>Go to GitHub → Settings → Developer settings</li>
+        <li>Click "Personal access tokens" → "Fine-grained tokens"</li>
+        <li>Click "Generate new token"</li>
+        <li>Select your repository (<code>hunter9201/Orji-Supplies</code>)</li>
+        <li>Set permissions: <strong>Contents (Read and write)</strong></li>
+        <li>Generate token and paste it here</li>
+      </ol>
+      <p><strong>Note:</strong> The token is stored only in your browser's local storage.</p>
+    </div>
+    
+    <div class="modal-actions">
+      <button id="cancelTokenBtn" class="button">Cancel</button>
+      <button id="saveTokenBtn" class="button primary">Save Token</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ======== EDIT THESE 5 LINES TO MATCH YOUR REPO ======== */
 const GH_OWNER = "hunter9201";
@@ -154,6 +277,12 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const previewEl = document.getElementById('preview');
 
+// Token modal refs
+const tokenModal = document.getElementById('tokenModal');
+const tokenInput = document.getElementById('tokenInput');
+const saveTokenBtn = document.getElementById('saveTokenBtn');
+const cancelTokenBtn = document.getElementById('cancelTokenBtn');
+
 const refreshBtn = document.getElementById('refreshBtn');
 const prodList = document.getElementById('prodList');
 const delImagesToggle = document.getElementById('delImagesToggle');
@@ -172,9 +301,53 @@ let files = []; // selected images
 function log(msg){ logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; }
 function setStatus(msg){ statusEl.textContent = msg; }
 function token(){ return localStorage.getItem(TOKEN_KEY) || ""; }
-function tokenOk(){ const t = token(); tokenState.textContent = t ? "Token set" : "No token"; tokenState.style.background = t ? "#dcfce7" : "#0ea5e90f"; }
-setTokenBtn.onclick = ()=>{ const t = prompt("Paste your GitHub Personal Access Token (fine-grained, contents: read/write):"); if (t) localStorage.setItem(TOKEN_KEY,t.trim()); tokenOk(); };
-clearTokenBtn.onclick = ()=>{ localStorage.removeItem(TOKEN_KEY); tokenOk(); };
+function tokenOk(){ 
+  const t = token(); 
+  tokenState.textContent = t ? "Token set" : "No token"; 
+  tokenState.style.background = t ? "#dcfce7" : "#0ea5e90f"; 
+  tokenState.style.borderColor = t ? "#86efac" : "#bae6fd";
+}
+
+// Token modal functions
+function showTokenModal() {
+  tokenModal.style.display = 'flex';
+  tokenInput.value = token(); // Pre-fill with existing token if any
+  tokenInput.focus();
+  tokenInput.select();
+}
+
+function hideTokenModal() {
+  tokenModal.style.display = 'none';
+}
+
+function saveToken() {
+  const t = tokenInput.value.trim();
+  if (t) {
+    localStorage.setItem(TOKEN_KEY, t);
+    tokenOk();
+    log("GitHub token saved.");
+  }
+  hideTokenModal();
+}
+
+// Event listeners for token modal
+setTokenBtn.onclick = showTokenModal;
+clearTokenBtn.onclick = ()=>{ 
+  if (confirm("Clear your GitHub token?")) {
+    localStorage.removeItem(TOKEN_KEY); 
+    tokenOk(); 
+    log("GitHub token cleared.");
+  }
+};
+saveTokenBtn.onclick = saveToken;
+cancelTokenBtn.onclick = hideTokenModal;
+
+// Close modal when clicking outside
+tokenModal.addEventListener('click', (e) => {
+  if (e.target === tokenModal) {
+    hideTokenModal();
+  }
+});
 
 // file selection
 fileInput.addEventListener('change', (e)=>{
@@ -250,7 +423,11 @@ function slugify(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-
 // ===== PUBLISH flow (unchanged) =====
 publishBtn.onclick = async ()=>{
   try{
-    if (!token()){ alert("Set your GitHub token first."); return; }
+    if (!token()){ 
+      alert("Set your GitHub token first."); 
+      showTokenModal(); // Show modal if no token
+      return; 
+    }
     const name = pName.value.trim();
     if (!name){ alert("Enter product name."); return; }
     if (!pRetail.value){ alert("Enter retail price."); return; }
@@ -313,7 +490,7 @@ publishBtn.onclick = async ()=>{
         <div class="muted small">${product.desc||''}</div>
         <div class="muted small">Images: ${product.imgs.length}</div>
       </div>`;
-    alert("Published! Open your shop (index.html). If it’s already open, refresh it.");
+    alert("Published! Open your shop (index.html). If it's already open, refresh it.");
     // Refresh product list after publish
     await refreshProductsList();
   }catch(err){
@@ -383,7 +560,7 @@ async function refreshProductsList(){
 }
 
 async function deleteProduct(productId, alsoDeleteImages){
-  if (!token()){ alert("Set your GitHub token first."); return; }
+  if (!token()){ alert("Set your GitHub token first."); showTokenModal(); return; }
   if (!confirm(`Delete product "${productId}"${alsoDeleteImages ? " and its images" : ""}? This cannot be undone.`)) return;
 
   setStatus("Deleting…");
@@ -436,9 +613,18 @@ prodList.addEventListener('click', async (e)=>{
   }
 });
 
+// Initialize
 tokenOk();
 renderFiles();
 refreshProductsList(); // load list on open
+
+// Add keyboard shortcut for token modal (Ctrl/Cmd + T)
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+    e.preventDefault();
+    showTokenModal();
+  }
+});
 </script>
 </body>
 </html>
