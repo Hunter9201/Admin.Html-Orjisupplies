@@ -2,84 +2,474 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Orji Supplies — Admin (Upload to GitHub)</title>
+<title>Orji Supplies — Complete Admin Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#0ea5e9;--ok:#16a34a;--bad:#ef4444;--card:#fff;--bg:#f8fafc}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10}
-  .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
-  .card .body{padding:14px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-  label{font-weight:700;font-size:14px;display:block;margin-bottom:5px}
-  input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px}
-  .muted{color:var(--muted)}
-  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer;font-size:14px}
-  .primary{background:var(--brand);border-color:var(--brand);color:#fff}
-  .ok{background:var(--ok);border-color:var(--ok);color:#fff}
-  .bad{background:var(--bad);border-color:var(--bad);color:#fff}
-  .images{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:10px}
-  .images .preview{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f8fafc}
-  .images img{width:100%;height:120px;object-fit:cover;display:block;background:#f1f5f9}
-  .images .rm{position:absolute;top:4px;right:4px;padding:4px 8px;font-size:12px}
-  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-  .tag{display:inline-block;background:#0ea5e90f;border:1px solid #bae6fd;color:#0369a1;font-weight:800;padding:3px 8px;border-radius:999px;font-size:12px}
-  .small{font-size:12px}
-  .list{display:grid;gap:8px;margin-top:10px}
-  .list .item{border:1px dashed var(--line);border-radius:10px;padding:10px}
-  .code{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;max-height:300px;overflow-y:auto}
-  .status-box{padding:10px;border-radius:8px;background:#f1f5f9;margin:10px 0}
-  .debug-info{background:#fee;border:1px solid #fcc;padding:10px;border-radius:8px;margin:10px 0}
+  :root {
+    --ink: #0f172a;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --brand: #0ea5e9;
+    --ok: #16a34a;
+    --bad: #ef4444;
+    --warning: #f59e0b;
+    --card: #fff;
+    --bg: #f8fafc;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  header {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .logo h1 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  .logo p {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+  
+  .token-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .token-status {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  
+  .token-status.active {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #10b981;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+  
+  .btn:hover {
+    background: #f8fafc;
+  }
+  
+  .btn-primary {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+  
+  .btn-primary:hover {
+    background: #0284c7;
+  }
+  
+  .btn-success {
+    background: var(--ok);
+    color: white;
+    border-color: var(--ok);
+  }
+  
+  .btn-success:hover {
+    background: #15803d;
+  }
+  
+  .btn-danger {
+    background: var(--bad);
+    color: white;
+    border-color: var(--bad);
+  }
+  
+  .btn-danger:hover {
+    background: #dc2626;
+  }
+  
+  .btn-warning {
+    background: var(--warning);
+    color: white;
+    border-color: var(--warning);
+  }
+  
+  .btn-warning:hover {
+    background: #d97706;
+  }
+  
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid var(--line);
+  }
+  
+  .card h2 {
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    color: var(--ink);
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--ink);
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border 0.2s;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  @media (max-width: 576px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .image-upload {
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+  }
+  
+  .image-upload:hover {
+    border-color: var(--brand);
+    background: #f0f9ff;
+  }
+  
+  .image-upload input {
+    display: none;
+  }
+  
+  .image-upload p {
+    color: var(--muted);
+    margin: 10px 0 0;
+    font-size: 0.875rem;
+  }
+  
+  .image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .preview-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+  }
+  
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--bad);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+  }
+  
+  .products-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .product-item {
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: #f8fafc;
+  }
+  
+  .product-item h4 {
+    margin-bottom: 5px;
+    color: var(--ink);
+  }
+  
+  .product-item p {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-bottom: 3px;
+  }
+  
+  .product-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    align-items: center;
+  }
+  
+  .delete-btn {
+    background: var(--bad);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  
+  .log-container {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  
+  .log-entry {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #334155;
+  }
+  
+  .log-entry.success {
+    color: #86efac;
+  }
+  
+  .log-entry.error {
+    color: #fca5a5;
+  }
+  
+  .log-entry.warning {
+    color: #fde68a;
+  }
+  
+  .log-entry.info {
+    color: #93c5fd;
+  }
+  
+  .status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--line);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .modal-content h3 {
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  
+  .token-instructions {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+  }
+  
+  .token-instructions ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .token-instructions li {
+    margin-bottom: 5px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--line);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .hidden {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-    <strong>Orji Supplies — Admin</strong>
-    <div class="bar">
-      <button id="setTokenBtn" class="button">Set GitHub Token</button>
-      <button id="clearTokenBtn" class="button bad">Clear Token</button>
-      <span id="tokenState" class="tag">No token</span>
+<div class="container">
+  <header>
+    <div class="logo">
+      <h1>Orji Supplies Admin</h1>
+      <p>Upload products directly to GitHub: hunter9201/Orji-Supplies</p>
     </div>
-  </div>
-</header>
+    <div class="token-controls">
+      <span id="tokenState" class="token-status">No Token</span>
+      <button id="setTokenBtn" class="btn btn-primary">Set Token</button>
+      <button id="clearTokenBtn" class="btn btn-danger">Clear</button>
+    </div>
+  </header>
 
-<div class="wrap">
-  <div class="debug-info" id="debugInfo">
-    <strong>Debug Info:</strong> Loading configuration...
-  </div>
-  
-  <div class="card">
-    <div class="body">
-      <h2 style="margin:0 0 10px">Test GitHub Connection</h2>
-      <p class="small muted">First, let's test if we can connect to your repository.</p>
-      <div class="bar">
-        <button id="testConnectionBtn" class="button primary">Test Connection</button>
-        <button id="createRepoFilesBtn" class="button ok">Create Required Files</button>
+  <div class="grid">
+    <!-- Left Column: Product Form -->
+    <div class="card">
+      <h2>Add New Product</h2>
+      
+      <div class="form-group">
+        <label for="productName">Product Name *</label>
+        <input type="text" id="productName" class="form-control" placeholder="e.g., Harpic Power Plus 10X" required>
       </div>
-      <div id="connectionStatus" class="status-box">Not tested yet</div>
-    </div>
-  </div>
-  
-  <div class="card">
-    <div class="body">
-      <h2 style="margin:0 0 10px">Simple Product Upload</h2>
-      <div class="row">
-        <div>
-          <label>Product Name</label>
-          <input id="pName" placeholder="e.g., Harpic Power Plus 10X">
-        </div>
-        <div>
-          <label>Retail Price (UGX)</label>
-          <input id="pRetail" type="number" placeholder="16000">
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>Category</label>
-          <select id="pCat">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="productCategory">Category</label>
+          <select id="productCategory" class="form-control">
             <option value="laundry">Laundry & Detergents</option>
             <option value="cleaning">Cleaning Products</option>
             <option value="pest">Pest Control</option>
@@ -95,512 +485,866 @@
             <option value="books">Books & Education</option>
           </select>
         </div>
-        <div>
-          <label>Description</label>
-          <input id="pDesc" placeholder="Short description">
+        
+        <div class="form-group">
+          <label for="productUnit">Unit</label>
+          <input type="text" id="productUnit" class="form-control" placeholder="e.g., bottle, pack, piece" value="piece">
         </div>
       </div>
       
-      <div class="bar" style="margin-top:14px">
-        <button id="publishBtn" class="button primary" disabled>Publish Product</button>
-        <button id="resetBtn" class="button">Reset Form</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="retailPrice">Retail Price (UGX) *</label>
+          <input type="number" id="retailPrice" class="form-control" placeholder="16000" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="wholesalePrice">Wholesale Price (UGX)</label>
+          <input type="number" id="wholesalePrice" class="form-control" placeholder="14000">
+        </div>
       </div>
-      <div id="status" class="muted small" style="margin-top:8px"></div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="moq">MOQ (Minimum Order)</label>
+          <input type="number" id="moq" class="form-control" value="1">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="productDescription">Description</label>
+        <textarea id="productDescription" class="form-control" rows="3" placeholder="Product description..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Product Images (Up to 4 images)</label>
+        <div class="image-upload" onclick="document.getElementById('imageInput').click()">
+          <input type="file" id="imageInput" accept="image/*" multiple>
+          <div>📷 Click to select images</div>
+          <p>Drag & drop or click to browse</p>
+        </div>
+        <div id="imagePreview" class="image-preview"></div>
+      </div>
+      
+      <div class="form-actions">
+        <button id="publishBtn" class="btn btn-success" style="flex: 1;">🚀 Publish to GitHub</button>
+        <button id="resetBtn" class="btn">Clear Form</button>
+      </div>
+    </div>
+
+    <!-- Right Column: Products List & Log -->
+    <div class="card">
+      <h2>Existing Products</h2>
+      <div class="form-group">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button id="refreshBtn" class="btn btn-primary">Refresh List</button>
+          <label style="display: flex; align-items: center; gap: 5px; font-size: 0.875rem;">
+            <input type="checkbox" id="deleteImagesToggle">
+            Delete images when removing product
+          </label>
+        </div>
+      </div>
+      
+      <div id="productsList" class="products-list">
+        <!-- Products will be loaded here -->
+        <p style="text-align: center; color: var(--muted); padding: 20px;">
+          Click "Refresh List" to load products
+        </p>
+      </div>
     </div>
   </div>
-  
-  <div class="card">
-    <div class="body">
-      <h3 style="margin:0 0 10px">Debug Log</h3>
-      <div id="log" class="code"></div>
+
+  <!-- Debug Log -->
+  <div class="card" style="margin-top: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <h2 style="margin: 0;">Activity Log</h2>
+      <button id="clearLogBtn" class="btn btn-danger">Clear Log</button>
     </div>
+    <div id="debugLog" class="log-container">
+      <!-- Log entries will appear here -->
+      System initialized. Ready to connect to GitHub.
+    </div>
+  </div>
+</div>
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <div>
+    <span id="statusMessage">Ready</span>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <span id="connectionStatus" style="font-size: 0.875rem; color: var(--muted);">Not connected</span>
+    <div id="loadingSpinner" class="loading hidden"></div>
   </div>
 </div>
 
 <!-- Token Modal -->
-<div id="tokenModal" class="modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
-  <div class="modal-content" style="background:white;border-radius:12px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">
-    <h3 style="margin:0 0 16px 0">Set GitHub Token</h3>
-    <p><strong>IMPORTANT:</strong> You need a GitHub Personal Access Token with <code>repo</code> permission.</p>
-    <textarea id="tokenInput" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;font-family:monospace;margin-bottom:8px" rows="4" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"></textarea>
+<div id="tokenModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Set GitHub Token</h3>
     
-    <div class="instruction" style="font-size:14px;color:var(--muted);margin-top:8px;line-height:1.4">
-      <p><strong>How to create token:</strong></p>
-      <ol style="margin:8px 0 8px 20px;padding:0">
+    <div class="token-instructions">
+      <p><strong>How to get your GitHub Token:</strong></p>
+      <ol>
         <li>Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Tokens</a></li>
         <li>Click "Generate new token" → "Generate new token (classic)"</li>
-        <li>Give it a name like "Orji Supplies Admin"</li>
-        <li>Select <strong>repo</strong> permission (full control of private repositories)</li>
-        <li>Click "Generate token"</li>
-        <li>Copy the token and paste it here</li>
+        <li>Give it a name: "Orji Supplies Admin"</li>
+        <li>Select expiration: "No expiration"</li>
+        <li>Check <strong>repo</strong> (Full control of private repositories)</li>
+        <li>Scroll down and click "Generate token"</li>
+        <li>Copy the token (starts with ghp_) and paste below</li>
       </ol>
-      <p><strong>Note:</strong> Token is stored only in your browser.</p>
+      <p><strong>Warning:</strong> Keep this token secret! It's stored only in your browser.</p>
     </div>
     
-    <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px">
-      <button id="cancelTokenBtn" class="button">Cancel</button>
-      <button id="saveTokenBtn" class="button primary">Save Token</button>
+    <div class="form-group">
+      <label for="tokenInput">GitHub Personal Access Token</label>
+      <textarea id="tokenInput" class="form-control" rows="4" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="font-family: monospace;"></textarea>
+    </div>
+    
+    <div class="modal-actions">
+      <button id="cancelTokenBtn" class="btn">Cancel</button>
+      <button id="saveTokenBtn" class="btn btn-primary">Save Token</button>
     </div>
   </div>
 </div>
 
+<!-- Progress Modal -->
+<div id="progressModal" class="modal hidden">
+  <div class="modal-content" style="text-align: center;">
+    <h3 id="progressTitle">Uploading...</h3>
+    <div id="progressBar" style="height: 4px; background: var(--line); border-radius: 2px; margin: 20px 0; overflow: hidden;">
+      <div id="progressFill" style="height: 100%; background: var(--brand); width: 0%; transition: width 0.3s;"></div>
+    </div>
+    <p id="progressMessage">Starting upload...</p>
+    <div id="progressDetails" class="log-container" style="max-height: 200px; margin-top: 15px; text-align: left;"></div>
+  </div>
+</div>
+
 <script>
-// ======== CONFIGURATION ========
-const GH_OWNER = "hunter9201";
-const GH_REPO = "Orji-Supplies";
-const GH_BRANCH = "main";
-const GH_IMAGES_DIR = "images";
-const GH_PRODUCTS_PATH = "products.json";
-const TOKEN_KEY = "ORJI_GH_TOKEN_V1";
-
-// ======== UI ELEMENTS ========
-const tokenState = document.getElementById('tokenState');
-const setTokenBtn = document.getElementById('setTokenBtn');
-const clearTokenBtn = document.getElementById('clearTokenBtn');
-const debugInfo = document.getElementById('debugInfo');
-const testConnectionBtn = document.getElementById('testConnectionBtn');
-const createRepoFilesBtn = document.getElementById('createRepoFilesBtn');
-const connectionStatus = document.getElementById('connectionStatus');
-const publishBtn = document.getElementById('publishBtn');
-const resetBtn = document.getElementById('resetBtn');
-const statusEl = document.getElementById('status');
-const logEl = document.getElementById('log');
-
-// Form elements
-const pName = document.getElementById('pName');
-const pCat = document.getElementById('pCat');
-const pRetail = document.getElementById('pRetail');
-const pDesc = document.getElementById('pDesc');
-
-// Token modal elements
-const tokenModal = document.getElementById('tokenModal');
-const tokenInput = document.getElementById('tokenInput');
-const saveTokenBtn = document.getElementById('saveTokenBtn');
-const cancelTokenBtn = document.getElementById('cancelTokenBtn');
-
-// ======== UTILITY FUNCTIONS ========
-function log(msg) { 
-  const timestamp = new Date().toLocaleTimeString();
-  logEl.textContent += `[${timestamp}] ${msg}\n`; 
-  logEl.scrollTop = logEl.scrollHeight; 
-}
-
-function setStatus(msg) { 
-  statusEl.textContent = msg; 
-  statusEl.style.color = 'var(--ink)';
-}
-
-function setError(msg) {
-  statusEl.textContent = msg;
-  statusEl.style.color = 'var(--bad)';
-}
-
-function setSuccess(msg) {
-  statusEl.textContent = msg;
-  statusEl.style.color = 'var(--ok)';
-}
-
-function token() { 
-  return localStorage.getItem(TOKEN_KEY) || ""; 
-}
-
-function tokenOk() { 
-  const t = token(); 
-  if (t) {
-    tokenState.textContent = "✓ Token set"; 
-    tokenState.style.background = "#dcfce7";
-    tokenState.style.borderColor = "#86efac";
-    tokenState.style.color = "#166534";
-  } else {
-    tokenState.textContent = "✗ No token"; 
-    tokenState.style.background = "#fef2f2";
-    tokenState.style.borderColor = "#fecaca";
-    tokenState.style.color = "#991b1b";
-  }
-  publishBtn.disabled = !t;
-}
-
-// ======== TOKEN MODAL ========
-function showTokenModal() {
-  tokenModal.style.display = 'flex';
-  tokenInput.value = token();
-  tokenInput.focus();
-  tokenInput.select();
-}
-
-function hideTokenModal() {
-  tokenModal.style.display = 'none';
-}
-
-function saveToken() {
-  const t = tokenInput.value.trim();
-  if (t) {
-    localStorage.setItem(TOKEN_KEY, t);
-    tokenOk();
-    log("GitHub token saved.");
-    testConnection(); // Test connection after saving token
-  }
-  hideTokenModal();
-}
-
-setTokenBtn.onclick = showTokenModal;
-clearTokenBtn.onclick = () => { 
-  if (confirm("Clear your GitHub token?")) {
-    localStorage.removeItem(TOKEN_KEY); 
-    tokenOk(); 
-    log("GitHub token cleared.");
-  }
+// ============================================
+// CONFIGURATION - EDIT THESE VALUES
+// ============================================
+const CONFIG = {
+  GITHUB_OWNER: "hunter9201",
+  GITHUB_REPO: "Orji-Supplies",
+  GITHUB_BRANCH: "main",
+  IMAGES_FOLDER: "images",
+  PRODUCTS_FILE: "products.json",
+  TOKEN_STORAGE_KEY: "orji_github_token_v2"
 };
-saveTokenBtn.onclick = saveToken;
-cancelTokenBtn.onclick = hideTokenModal;
-tokenModal.addEventListener('click', (e) => {
-  if (e.target === tokenModal) hideTokenModal();
-});
 
-// ======== GITHUB API FUNCTIONS ========
-const API_BASE = "https://api.github.com";
+// ============================================
+// STATE MANAGEMENT
+// ============================================
+let state = {
+  token: localStorage.getItem(CONFIG.TOKEN_STORAGE_KEY) || "",
+  selectedImages: [],
+  products: [],
+  isUploading: false
+};
 
-function ghHeaders() { 
-  return { 
-    "Authorization": "Bearer " + token(), 
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28"
-  }; 
+// ============================================
+// DOM ELEMENTS
+// ============================================
+const elements = {
+  // Token controls
+  tokenState: document.getElementById('tokenState'),
+  setTokenBtn: document.getElementById('setTokenBtn'),
+  clearTokenBtn: document.getElementById('clearTokenBtn'),
+  
+  // Product form
+  productName: document.getElementById('productName'),
+  productCategory: document.getElementById('productCategory'),
+  productUnit: document.getElementById('productUnit'),
+  retailPrice: document.getElementById('retailPrice'),
+  wholesalePrice: document.getElementById('wholesalePrice'),
+  moq: document.getElementById('moq'),
+  productDescription: document.getElementById('productDescription'),
+  imageInput: document.getElementById('imageInput'),
+  imagePreview: document.getElementById('imagePreview'),
+  publishBtn: document.getElementById('publishBtn'),
+  resetBtn: document.getElementById('resetBtn'),
+  
+  // Products list
+  refreshBtn: document.getElementById('refreshBtn'),
+  deleteImagesToggle: document.getElementById('deleteImagesToggle'),
+  productsList: document.getElementById('productsList'),
+  
+  // Log
+  debugLog: document.getElementById('debugLog'),
+  clearLogBtn: document.getElementById('clearLogBtn'),
+  
+  // Status
+  statusMessage: document.getElementById('statusMessage'),
+  connectionStatus: document.getElementById('connectionStatus'),
+  loadingSpinner: document.getElementById('loadingSpinner'),
+  
+  // Modals
+  tokenModal: document.getElementById('tokenModal'),
+  tokenInput: document.getElementById('tokenInput'),
+  saveTokenBtn: document.getElementById('saveTokenBtn'),
+  cancelTokenBtn: document.getElementById('cancelTokenBtn'),
+  
+  progressModal: document.getElementById('progressModal'),
+  progressTitle: document.getElementById('progressTitle'),
+  progressFill: document.getElementById('progressFill'),
+  progressMessage: document.getElementById('progressMessage'),
+  progressDetails: document.getElementById('progressDetails')
+};
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+function log(message, type = 'info') {
+  const timestamp = new Date().toLocaleTimeString();
+  const logEntry = document.createElement('div');
+  logEntry.className = `log-entry ${type}`;
+  logEntry.textContent = `[${timestamp}] ${message}`;
+  elements.debugLog.appendChild(logEntry);
+  elements.debugLog.scrollTop = elements.debugLog.scrollHeight;
 }
 
-async function ghGetContents(path) {
-  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}?ref=${GH_BRANCH}`;
-  log(`GET ${path}`);
+function setStatus(message, isError = false) {
+  elements.statusMessage.textContent = message;
+  elements.statusMessage.style.color = isError ? 'var(--bad)' : 'var(--ink)';
+}
+
+function setConnectionStatus(message, isConnected = false) {
+  elements.connectionStatus.textContent = message;
+  elements.connectionStatus.style.color = isConnected ? 'var(--ok)' : 'var(--muted)';
+}
+
+function showLoading() {
+  elements.loadingSpinner.classList.remove('hidden');
+}
+
+function hideLoading() {
+  elements.loadingSpinner.classList.add('hidden');
+}
+
+function updateTokenDisplay() {
+  if (state.token) {
+    elements.tokenState.textContent = "✓ Token Set";
+    elements.tokenState.classList.add('active');
+  } else {
+    elements.tokenState.textContent = "No Token";
+    elements.tokenState.classList.remove('active');
+  }
+}
+
+function showModal(modal) {
+  modal.classList.remove('hidden');
+}
+
+function hideModal(modal) {
+  modal.classList.add('hidden');
+}
+
+function updateProgress(percent, message, details = '') {
+  elements.progressFill.style.width = `${percent}%`;
+  elements.progressMessage.textContent = message;
+  if (details) {
+    const detailEntry = document.createElement('div');
+    detailEntry.textContent = details;
+    elements.progressDetails.appendChild(detailEntry);
+    elements.progressDetails.scrollTop = elements.progressDetails.scrollHeight;
+  }
+}
+
+// ============================================
+// GITHUB API FUNCTIONS
+// ============================================
+const GITHUB_API = {
+  baseUrl: 'https://api.github.com',
   
-  try {
-    const r = await fetch(url, { headers: ghHeaders() });
-    if (r.status === 404) {
-      log(`✗ ${path} not found (404)`);
-      return { status: 404 };
+  headers() {
+    return {
+      'Authorization': `Bearer ${state.token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json'
+    };
+  },
+  
+  async testConnection() {
+    log('Testing GitHub connection...', 'info');
+    showLoading();
+    
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}`,
+        { headers: this.headers() }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`Connection failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      log(`✓ Connected to ${data.full_name}`, 'success');
+      setConnectionStatus(`Connected to ${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}`, true);
+      return true;
+    } catch (error) {
+      log(`✗ Connection error: ${error.message}`, 'error');
+      setConnectionStatus('Connection failed', false);
+      return false;
+    } finally {
+      hideLoading();
     }
-    if (!r.ok) {
-      const errorText = await r.text();
-      log(`✗ GET failed: ${r.status} ${errorText}`);
-      throw new Error(`GET ${path} failed: ${r.status}`);
+  },
+  
+  async getFile(path) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}?ref=${CONFIG.GITHUB_BRANCH}`,
+        { headers: this.headers() }
+      );
+      
+      if (response.status === 404) {
+        return { exists: false };
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Failed to get file: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const content = atob(data.content.replace(/\n/g, ''));
+      return {
+        exists: true,
+        content: content,
+        sha: data.sha
+      };
+    } catch (error) {
+      throw error;
+    }
+  },
+  
+  async uploadFile(path, content, message, sha = null) {
+    const body = {
+      message: message,
+      content: btoa(content),
+      branch: CONFIG.GITHUB_BRANCH
+    };
+    
+    if (sha) {
+      body.sha = sha;
     }
     
-    const data = await r.json();
-    log(`✓ ${path} loaded successfully`);
-    return data;
-  } catch (error) {
-    log(`✗ Network error: ${error.message}`);
-    throw error;
-  }
-}
-
-async function ghPutContents(path, content, message, sha = null) {
-  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}`;
-  const body = { 
-    message, 
-    content: btoa(unescape(encodeURIComponent(content))), 
-    branch: GH_BRANCH 
-  };
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`,
+        {
+          method: 'PUT',
+          headers: this.headers(),
+          body: JSON.stringify(body)
+        }
+      );
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Upload failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  },
   
-  if (sha) body.sha = sha;
-  
-  log(`PUT ${path}: ${message}`);
-  
-  try {
-    const r = await fetch(url, {
-      method: "PUT",
-      headers: { ...ghHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+  async uploadImage(file, filename) {
+    const path = `${CONFIG.IMAGES_FOLDER}/${filename}`;
+    
+    // Convert file to base64
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result.split(',')[1];
+        resolve(base64String);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
     
-    if (!r.ok) {
-      const errorText = await r.text();
-      log(`✗ PUT failed: ${r.status} ${errorText}`);
-      throw new Error(`PUT ${path} failed: ${r.status} ${errorText}`);
-    }
-    
-    const data = await r.json();
-    log(`✓ ${path} updated successfully`);
-    return data;
-  } catch (error) {
-    log(`✗ Network error: ${error.message}`);
-    throw error;
-  }
-}
-
-async function ghCreateFile(path, content, message) {
-  return ghPutContents(path, content, message);
-}
-
-// ======== TEST CONNECTION ========
-async function testConnection() {
-  if (!token()) {
-    connectionStatus.innerHTML = '<span style="color:var(--bad)">No token set. Click "Set GitHub Token" first.</span>';
-    return;
-  }
+    const message = `Upload product image: ${filename}`;
+    return this.uploadFile(path, base64, message);
+  },
   
-  connectionStatus.innerHTML = 'Testing connection to GitHub...';
-  log("=== Testing GitHub Connection ===");
-  
-  try {
-    // Test 1: Check if repository exists
-    const repoUrl = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}`;
-    log(`Testing repository: ${GH_OWNER}/${GH_REPO}`);
-    
-    const repoResponse = await fetch(repoUrl, { headers: ghHeaders() });
-    
-    if (!repoResponse.ok) {
-      if (repoResponse.status === 404) {
-        connectionStatus.innerHTML = `<span style="color:var(--bad)">Repository not found: ${GH_OWNER}/${GH_REPO}</span>`;
-        log(`✗ Repository not found: ${GH_OWNER}/${GH_REPO}`);
-        return;
-      } else if (repoResponse.status === 401 || repoResponse.status === 403) {
-        connectionStatus.innerHTML = `<span style="color:var(--bad)">Authentication failed. Check your token permissions.</span>`;
-        log(`✗ Authentication failed: ${repoResponse.status}`);
-        return;
-      }
-      throw new Error(`Repository check failed: ${repoResponse.status}`);
-    }
-    
-    log(`✓ Repository exists: ${GH_OWNER}/${GH_REPO}`);
-    
-    // Test 2: Check if products.json exists
-    const productsData = await ghGetContents(GH_PRODUCTS_PATH);
-    
-    if (productsData.status === 404) {
-      connectionStatus.innerHTML = `<span style="color:var(--muted)">✓ Connected to GitHub. products.json not found (will create it).</span>`;
-      log("✓ Connection successful!");
-    } else {
-      connectionStatus.innerHTML = `<span style="color:var(--ok)">✓ Connected to GitHub! Found products.json with ${JSON.parse(atob(productsData.content)).length} products.</span>`;
-      log("✓ Connection successful!");
-    }
-    
-    publishBtn.disabled = false;
-    
-  } catch (error) {
-    connectionStatus.innerHTML = `<span style="color:var(--bad)">Connection failed: ${error.message}</span>`;
-    log(`✗ Connection test failed: ${error.message}`);
-    publishBtn.disabled = true;
-  }
-}
-
-// ======== CREATE REQUIRED FILES ========
-async function createRequiredFiles() {
-  if (!token()) {
-    alert("Set your GitHub token first.");
-    showTokenModal();
-    return;
-  }
-  
-  log("=== Creating Required Files ===");
-  connectionStatus.innerHTML = 'Creating files...';
-  
-  try {
-    // 1. Create products.json if it doesn't exist
-    const productsCheck = await ghGetContents(GH_PRODUCTS_PATH);
-    if (productsCheck.status === 404) {
-      const initialProducts = [
+  async deleteFile(path, message, sha) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`,
         {
-          "id": "sample-product-" + Date.now(),
-          "name": "Sample Product",
-          "category": "home",
-          "retailPrice": 10000,
-          "wholesalePrice": 8000,
-          "unit": "piece",
-          "moq": 1,
-          "desc": "This is a sample product",
-          "imgs": []
+          method: 'DELETE',
+          headers: this.headers(),
+          body: JSON.stringify({
+            message: message,
+            sha: sha,
+            branch: CONFIG.GITHUB_BRANCH
+          })
         }
-      ];
-      
-      await ghCreateFile(
-        GH_PRODUCTS_PATH,
-        JSON.stringify(initialProducts, null, 2),
-        "Create products.json file"
       );
-      log("✓ Created products.json");
-    } else {
-      log("✓ products.json already exists");
-    }
-    
-    // 2. Create hero.json if it doesn't exist
-    const heroCheck = await ghGetContents("hero.json");
-    if (heroCheck.status === 404) {
-      const heroData = {
-        "hero": {
-          "title": "Orji Supplies - Your One-Stop Shop",
-          "subtitle": "Quality Products at Wholesale Prices",
-          "description": "We supply everything from household essentials to electronics, books, and more.",
-          "backgroundImage": "",
-          "ctaButton": {
-            "text": "Shop Now",
-            "link": "#products"
-          }
-        },
-        "contactInfo": {
-          "phone": "+256 700 123 456",
-          "email": "info@orjisupplies.com",
-          "address": "Kampala Road, Kampala, Uganda",
-          "businessHours": "Mon-Sat: 8:00 AM - 8:00 PM"
-        }
-      };
       
-      await ghCreateFile(
-        "hero.json",
-        JSON.stringify(heroData, null, 2),
-        "Create hero.json file"
-      );
-      log("✓ Created hero.json");
-    } else {
-      log("✓ hero.json already exists");
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      throw error;
     }
-    
-    connectionStatus.innerHTML = `<span style="color:var(--ok)">✓ Required files created successfully!</span>`;
-    log("✓ All required files created");
-    
-    // Test connection again to update status
-    setTimeout(testConnection, 1000);
-    
-  } catch (error) {
-    connectionStatus.innerHTML = `<span style="color:var(--bad)">Failed to create files: ${error.message}</span>`;
-    log(`✗ File creation failed: ${error.message}`);
   }
-}
+};
 
-// ======== PUBLISH PRODUCT ========
-async function publishProduct() {
-  if (!token()) {
-    alert("Set your GitHub token first.");
-    showTokenModal();
+// ============================================
+// IMAGE HANDLING
+// ============================================
+function handleImageSelection(event) {
+  const files = Array.from(event.target.files);
+  
+  // Limit to 4 images
+  const remainingSlots = 4 - state.selectedImages.length;
+  const filesToAdd = files.slice(0, remainingSlots);
+  
+  if (filesToAdd.length === 0) {
+    alert('You can only upload up to 4 images');
     return;
   }
   
-  const name = pName.value.trim();
-  const price = pRetail.value.trim();
-  const category = pCat.value;
-  const desc = pDesc.value.trim();
+  filesToAdd.forEach(file => {
+    if (!file.type.startsWith('image/')) {
+      alert(`${file.name} is not an image file`);
+      return;
+    }
+    
+    state.selectedImages.push(file);
+  });
+  
+  renderImagePreview();
+}
+
+function removeImage(index) {
+  state.selectedImages.splice(index, 1);
+  renderImagePreview();
+}
+
+function renderImagePreview() {
+  elements.imagePreview.innerHTML = '';
+  
+  if (state.selectedImages.length === 0) {
+    elements.imagePreview.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px;">No images selected</p>';
+    return;
+  }
+  
+  state.selectedImages.forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const previewItem = document.createElement('div');
+      previewItem.className = 'preview-item';
+      
+      previewItem.innerHTML = `
+        <img src="${e.target.result}" alt="Preview">
+        <button class="remove-btn" onclick="removeImage(${index})">×</button>
+      `;
+      
+      elements.imagePreview.appendChild(previewItem);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ============================================
+// PRODUCT MANAGEMENT
+// ============================================
+async function loadProducts() {
+  if (!state.token) {
+    log('Cannot load products: No GitHub token', 'error');
+    return;
+  }
+  
+  log('Loading products from GitHub...', 'info');
+  showLoading();
+  
+  try {
+    const file = await GITHUB_API.getFile(CONFIG.PRODUCTS_FILE);
+    
+    if (!file.exists) {
+      log('products.json not found. Creating empty file...', 'warning');
+      await GITHUB_API.uploadFile(CONFIG.PRODUCTS_FILE, '[]', 'Create empty products file');
+      state.products = [];
+    } else {
+      try {
+        state.products = JSON.parse(file.content);
+        if (!Array.isArray(state.products)) {
+          state.products = [];
+        }
+        log(`✓ Loaded ${state.products.length} products`, 'success');
+      } catch (parseError) {
+        log('Error parsing products.json. Creating new file...', 'error');
+        await GITHUB_API.uploadFile(CONFIG.PRODUCTS_FILE, '[]', 'Recreate products file (corrupted)');
+        state.products = [];
+      }
+    }
+    
+    renderProductsList();
+  } catch (error) {
+    log(`✗ Failed to load products: ${error.message}`, 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderProductsList() {
+  elements.productsList.innerHTML = '';
+  
+  if (state.products.length === 0) {
+    elements.productsList.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--muted);">
+        <p>No products found</p>
+        <p style="font-size: 0.875rem; margin-top: 10px;">Add your first product using the form on the left</p>
+      </div>
+    `;
+    return;
+  }
+  
+  state.products.forEach((product, index) => {
+    const item = document.createElement('div');
+    item.className = 'product-item';
+    
+    item.innerHTML = `
+      <h4>${product.name}</h4>
+      <p>Category: ${product.category} | Price: UGX ${product.retailPrice.toLocaleString()}</p>
+      <p>${product.desc || 'No description'}</p>
+      <div class="product-meta">
+        <span style="font-size: 0.75rem; color: var(--muted);">
+          ${product.imgs ? product.imgs.length : 0} images
+        </span>
+        <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
+      </div>
+    `;
+    
+    elements.productsList.appendChild(item);
+  });
+}
+
+async function publishProduct() {
+  // Validate form
+  const name = elements.productName.value.trim();
+  const retailPrice = elements.retailPrice.value.trim();
   
   if (!name) {
-    alert("Enter product name.");
-    pName.focus();
+    alert('Please enter a product name');
+    elements.productName.focus();
     return;
   }
   
-  if (!price) {
-    alert("Enter retail price.");
-    pRetail.focus();
+  if (!retailPrice) {
+    alert('Please enter a retail price');
+    elements.retailPrice.focus();
     return;
   }
   
-  log("=== Publishing Product ===");
-  setStatus("Starting publish...");
+  if (!state.token) {
+    alert('Please set your GitHub token first');
+    showModal(elements.tokenModal);
+    return;
+  }
+  
+  // Disable publish button
+  elements.publishBtn.disabled = true;
+  state.isUploading = true;
+  
+  // Show progress modal
+  elements.progressTitle.textContent = 'Publishing Product';
+  elements.progressDetails.innerHTML = '';
+  showModal(elements.progressModal);
   
   try {
-    // 1. Load existing products
-    setStatus("Loading products.json...");
-    const productsData = await ghGetContents(GH_PRODUCTS_PATH);
+    updateProgress(0, 'Starting upload...');
+    
+    // 1. Upload images
+    updateProgress(10, 'Uploading images...');
+    const imageUrls = [];
+    
+    for (let i = 0; i < state.selectedImages.length; i++) {
+      const file = state.selectedImages[i];
+      const timestamp = Date.now();
+      const extension = file.name.split('.').pop().toLowerCase();
+      const filename = `${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${timestamp}-${i+1}.${extension}`;
+      
+      updateProgress(10 + (i * 20), `Uploading image ${i + 1} of ${state.selectedImages.length}...`, `Uploading: ${filename}`);
+      
+      try {
+        await GITHUB_API.uploadImage(file, filename);
+        const imageUrl = `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${CONFIG.IMAGES_FOLDER}/${filename}`;
+        imageUrls.push(imageUrl);
+        log(`✓ Image uploaded: ${filename}`, 'success');
+      } catch (error) {
+        log(`✗ Failed to upload image: ${error.message}`, 'error');
+      }
+    }
+    
+    // 2. Load existing products
+    updateProgress(80, 'Loading existing products...');
+    const file = await GITHUB_API.getFile(CONFIG.PRODUCTS_FILE);
     
     let products = [];
     let sha = null;
     
-    if (productsData.status === 404) {
-      log("products.json not found, will create new file");
-    } else {
-      sha = productsData.sha;
-      const content = atob(productsData.content.replace(/\n/g, ''));
-      try {
-        products = JSON.parse(content);
-        if (!Array.isArray(products)) products = [];
-        log(`Loaded ${products.length} existing products`);
-      } catch (e) {
-        log(`Error parsing products.json: ${e.message}`);
-        products = [];
-      }
+    if (file.exists) {
+      products = JSON.parse(file.content);
+      sha = file.sha;
     }
     
-    // 2. Create new product
+    // 3. Create new product object
     const newProduct = {
       id: `product-${Date.now()}`,
       name: name,
-      category: category,
-      retailPrice: parseInt(price) || 0,
-      wholesalePrice: Math.floor(parseInt(price) * 0.8) || 0,
-      unit: "piece",
-      moq: 1,
-      desc: desc || "No description",
-      imgs: []
+      category: elements.productCategory.value,
+      retailPrice: parseInt(retailPrice) || 0,
+      wholesalePrice: parseInt(elements.wholesalePrice.value) || Math.floor(parseInt(retailPrice) * 0.8),
+      unit: elements.productUnit.value || 'piece',
+      moq: parseInt(elements.moq.value) || 1,
+      desc: elements.productDescription.value.trim(),
+      imgs: imageUrls
     };
     
-    // 3. Add to products array
+    // 4. Add to products array
     products.push(newProduct);
     
-    // 4. Save back to GitHub
-    setStatus("Uploading to GitHub...");
-    await ghPutContents(
-      GH_PRODUCTS_PATH,
+    // 5. Upload updated products.json
+    updateProgress(90, 'Saving to GitHub...', 'Updating products.json');
+    
+    await GITHUB_API.uploadFile(
+      CONFIG.PRODUCTS_FILE,
       JSON.stringify(products, null, 2),
       `Add product: ${name}`,
       sha
     );
     
-    setSuccess(`✓ Product "${name}" published successfully!`);
-    log(`✓ Product published with ID: ${newProduct.id}`);
+    // 6. Update local state
+    state.products = products;
     
-    // 5. Reset form
-    resetForm();
+    // 7. Success!
+    updateProgress(100, 'Product published successfully!');
+    log(`✓ Product "${name}" published successfully`, 'success');
     
-    // 6. Show success message
-    alert(`Product "${name}" has been published to GitHub!\n\nYou can view it at: https://github.com/${GH_OWNER}/${GH_REPO}/blob/${GH_BRANCH}/${GH_PRODUCTS_PATH}`);
-    
-    // 7. Test connection again to refresh status
-    setTimeout(testConnection, 1000);
+    setTimeout(() => {
+      hideModal(elements.progressModal);
+      
+      // Show success message
+      alert(`✅ Product "${name}" has been published to GitHub!\n\nYou can view it at:\nhttps://github.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/blob/${CONFIG.GITHUB_BRANCH}/${CONFIG.PRODUCTS_FILE}`);
+      
+      // Reset form
+      resetForm();
+      
+      // Refresh products list
+      loadProducts();
+      
+      // Re-enable publish button
+      elements.publishBtn.disabled = false;
+      state.isUploading = false;
+    }, 1000);
     
   } catch (error) {
-    setError(`✗ Publish failed: ${error.message}`);
-    log(`✗ Publish error: ${error.message}`);
-    alert(`Publish failed:\n\n${error.message}`);
+    hideModal(elements.progressModal);
+    log(`✗ Failed to publish product: ${error.message}`, 'error');
+    alert(`❌ Failed to publish product:\n\n${error.message}`);
+    
+    // Re-enable publish button
+    elements.publishBtn.disabled = false;
+    state.isUploading = false;
   }
 }
 
-// ======== RESET FORM ========
+async function deleteProduct(index) {
+  if (!state.token) {
+    alert('Please set your GitHub token first');
+    return;
+  }
+  
+  const product = state.products[index];
+  const deleteImages = elements.deleteImagesToggle.checked;
+  
+  if (!confirm(`Delete product "${product.name}"?${deleteImages ? '\n\nThis will also delete all associated images.' : ''}`)) {
+    return;
+  }
+  
+  try {
+    // Delete images if requested
+    if (deleteImages && product.imgs && product.imgs.length > 0) {
+      for (const imageUrl of product.imgs) {
+        try {
+          // Extract filename from URL
+          const urlParts = imageUrl.split('/');
+          const filename = urlParts[urlParts.length - 1];
+          const path = `${CONFIG.IMAGES_FOLDER}/${filename}`;
+          
+          // Get file SHA first
+          const file = await GITHUB_API.getFile(path);
+          if (file.exists) {
+            await GITHUB_API.deleteFile(path, `Delete image for product: ${product.name}`, file.sha);
+            log(`✓ Deleted image: ${filename}`, 'success');
+          }
+        } catch (error) {
+          log(`✗ Failed to delete image: ${error.message}`, 'error');
+        }
+      }
+    }
+    
+    // Remove product from array
+    const updatedProducts = state.products.filter((_, i) => i !== index);
+    
+    // Update products.json on GitHub
+    const file = await GITHUB_API.getFile(CONFIG.PRODUCTS_FILE);
+    
+    await GITHUB_API.uploadFile(
+      CONFIG.PRODUCTS_FILE,
+      JSON.stringify(updatedProducts, null, 2),
+      `Delete product: ${product.name}`,
+      file.sha
+    );
+    
+    // Update local state
+    state.products = updatedProducts;
+    
+    log(`✓ Deleted product: ${product.name}`, 'success');
+    renderProductsList();
+    
+  } catch (error) {
+    log(`✗ Failed to delete product: ${error.message}`, 'error');
+    alert(`Failed to delete product: ${error.message}`);
+  }
+}
+
 function resetForm() {
-  pName.value = "";
-  pRetail.value = "";
-  pDesc.value = "";
-  pCat.selectedIndex = 0;
-  setStatus("");
+  elements.productName.value = '';
+  elements.retailPrice.value = '';
+  elements.wholesalePrice.value = '';
+  elements.productUnit.value = 'piece';
+  elements.moq.value = '1';
+  elements.productDescription.value = '';
+  elements.productCategory.selectedIndex = 0;
+  
+  state.selectedImages = [];
+  renderImagePreview();
+  
+  setStatus('Ready');
 }
 
-// ======== INITIALIZATION ========
+// ============================================
+// EVENT LISTENERS
+// ============================================
+function initializeEventListeners() {
+  // Token management
+  elements.setTokenBtn.addEventListener('click', () => {
+    elements.tokenInput.value = state.token;
+    showModal(elements.tokenModal);
+  });
+  
+  elements.clearTokenBtn.addEventListener('click', () => {
+    if (confirm('Clear GitHub token?')) {
+      state.token = '';
+      localStorage.removeItem(CONFIG.TOKEN_STORAGE_KEY);
+      updateTokenDisplay();
+      setConnectionStatus('Token cleared', false);
+      log('GitHub token cleared', 'warning');
+    }
+  });
+  
+  elements.saveTokenBtn.addEventListener('click', () => {
+    const token = elements.tokenInput.value.trim();
+    if (token) {
+      state.token = token;
+      localStorage.setItem(CONFIG.TOKEN_STORAGE_KEY, token);
+      updateTokenDisplay();
+      hideModal(elements.tokenModal);
+      log('GitHub token saved', 'success');
+      
+      // Test connection
+      GITHUB_API.testConnection().then(connected => {
+        if (connected) {
+          loadProducts();
+        }
+      });
+    } else {
+      alert('Please enter a valid GitHub token');
+    }
+  });
+  
+  elements.cancelTokenBtn.addEventListener('click', () => {
+    hideModal(elements.tokenModal);
+  });
+  
+  // Image handling
+  elements.imageInput.addEventListener('change', handleImageSelection);
+  
+  // Product form
+  elements.publishBtn.addEventListener('click', publishProduct);
+  elements.resetBtn.addEventListener('click', resetForm);
+  
+  // Products list
+  elements.refreshBtn.addEventListener('click', () => {
+    if (!state.token) {
+      alert('Please set your GitHub token first');
+      return;
+    }
+    loadProducts();
+  });
+  
+  // Log
+  elements.clearLogBtn.addEventListener('click', () => {
+    elements.debugLog.innerHTML = '';
+    log('Log cleared', 'info');
+  });
+  
+  // Auto-calculate wholesale price
+  elements.retailPrice.addEventListener('input', () => {
+    const retail = parseInt(elements.retailPrice.value) || 0;
+    if (retail > 0 && !elements.wholesalePrice.value) {
+      elements.wholesalePrice.value = Math.floor(retail * 0.8);
+    }
+  });
+  
+  // Allow closing modals with ESC key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      hideModal(elements.tokenModal);
+      if (!state.isUploading) {
+        hideModal(elements.progressModal);
+      }
+    }
+  });
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
 function initialize() {
-  // Update debug info
-  debugInfo.innerHTML = `
-    <strong>Debug Info:</strong><br>
-    Repository: <code>${GH_OWNER}/${GH_REPO}</code><br>
-    Branch: <code>${GH_BRANCH}</code><br>
-    Products file: <code>${GH_PRODUCTS_PATH}</code><br>
-    Token: ${token() ? "✓ Set" : "✗ Not set"}
-  `;
+  log('Orji Supplies Admin Panel initialized', 'info');
+  log(`Target repository: ${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}`, 'info');
   
-  // Set up event listeners
-  testConnectionBtn.onclick = testConnection;
-  createRepoFilesBtn.onclick = createRequiredFiles;
-  publishBtn.onclick = publishProduct;
-  resetBtn.onclick = resetForm;
+  updateTokenDisplay();
+  initializeEventListeners();
   
-  // Check token status
-  tokenOk();
-  
-  // Auto-test connection if token exists
-  if (token()) {
-    setTimeout(testConnection, 500);
+  // Test connection if token exists
+  if (state.token) {
+    log('Found existing GitHub token', 'info');
+    GITHUB_API.testConnection().then(connected => {
+      if (connected) {
+        loadProducts();
+      }
+    });
+  } else {
+    log('No GitHub token found. Click "Set Token" to begin.', 'warning');
   }
   
-  log("Admin panel initialized");
-  log(`Target: ${GH_OWNER}/${GH_REPO}`);
+  setStatus('Ready to connect to GitHub');
 }
 
-// ======== START APPLICATION ========
-window.addEventListener('load', initialize);
+// Start the application
+window.addEventListener('DOMContentLoaded', initialize);
 </script>
 </body>
 </html>
