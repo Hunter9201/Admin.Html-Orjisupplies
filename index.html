@@ -10,120 +10,28 @@
   body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
   header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;z-index:10}
   .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  .grid{display:grid;grid-template-columns:2fr 3fr;gap:16px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
   .card .body{padding:14px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  label{font-weight:700;font-size:14px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  label{font-weight:700;font-size:14px;display:block;margin-bottom:5px}
   input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px}
   .muted{color:var(--muted)}
-  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
+  .button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer;font-size:14px}
   .primary{background:var(--brand);border-color:var(--brand);color:#fff}
   .ok{background:var(--ok);border-color:var(--ok);color:#fff}
   .bad{background:var(--bad);border-color:var(--bad);color:#fff}
-  .images{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .images{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:10px}
   .images .preview{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f8fafc}
-  .images img{width:100%;height:160px;object-fit:cover;display:block;background:#f1f5f9}
-  .images .rm{position:absolute;top:6px;right:6px}
-  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .tag{display:inline-block;background:#0ea5e90f;border:1px solid #bae6fd;color:#0369a1;font-weight:800;padding:3px 8px;border-radius:999px}
+  .images img{width:100%;height:120px;object-fit:cover;display:block;background:#f1f5f9}
+  .images .rm{position:absolute;top:4px;right:4px;padding:4px 8px;font-size:12px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .tag{display:inline-block;background:#0ea5e90f;border:1px solid #bae6fd;color:#0369a1;font-weight:800;padding:3px 8px;border-radius:999px;font-size:12px}
   .small{font-size:12px}
-  .list{display:grid;gap:8px}
+  .list{display:grid;gap:8px;margin-top:10px}
   .list .item{border:1px dashed var(--line);border-radius:10px;padding:10px}
-  .code{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
-  
-  /* Tabs */
-  .tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:16px}
-  .tab{flex:1;text-align:center;padding:12px;background:none;border:none;cursor:pointer;font-weight:700;color:var(--muted);border-bottom:3px solid transparent}
-  .tab.active{color:var(--brand);border-bottom-color:var(--brand)}
-  
-  /* Token modal styles */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
-  }
-  
-  .modal-content {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  
-  .modal-content h3 {
-    margin: 0 0 16px 0;
-  }
-  
-  .modal-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .token-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: ui-monospace, monospace;
-    margin-bottom: 8px;
-  }
-  
-  .instruction {
-    font-size: 14px;
-    color: var(--muted);
-    margin-top: 8px;
-    line-height: 1.4;
-  }
-  
-  .instruction strong {
-    color: var(--ink);
-  }
-  
-  /* Mobile optimizations */
-  @media (max-width: 768px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .row {
-      grid-template-columns: 1fr;
-    }
-    
-    .images {
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    }
-    
-    .images img {
-      height: 120px;
-    }
-    
-    .modal-content {
-      padding: 20px;
-    }
-    
-    .modal-actions {
-      flex-direction: column;
-    }
-    
-    .modal-actions .button {
-      width: 100%;
-    }
-  }
+  .code{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;max-height:300px;overflow-y:auto}
+  .status-box{padding:10px;border-radius:8px;background:#f1f5f9;margin:10px 0}
+  .debug-info{background:#fee;border:1px solid #fcc;padding:10px;border-radius:8px;margin:10px 0}
 </style>
 </head>
 <body>
@@ -139,193 +47,97 @@
 </header>
 
 <div class="wrap">
-  <div class="tabs">
-    <button class="tab active" data-tab="products">Products</button>
-    <button class="tab" data-tab="hero">Hero Section</button>
+  <div class="debug-info" id="debugInfo">
+    <strong>Debug Info:</strong> Loading configuration...
   </div>
   
-  <div id="productsTab" class="tab-content active">
-    <div class="grid">
-      <!-- Left: Form -->
-      <div class="card">
-        <div class="body">
-          <h2 style="margin:0 0 10px">New Product</h2>
-          <div class="row">
-            <div>
-              <label>Product Name</label>
-              <input id="pName" placeholder="e.g., Harpic Power Plus 10X">
-            </div>
-            <div>
-              <label>Category</label>
-              <select id="pCat">
-                <option value="laundry">Laundry & Detergents</option>
-                <option value="cleaning">Cleaning Products</option>
-                <option value="pest">Pest Control</option>
-                <option value="home">Home & Kitchen</option>
-                <option value="personal">Personal Care</option>
-                <option value="baby">Baby Care</option>
-                <option value="drinks">Drinks & Beverages</option>
-                <option value="food">Food Items</option>
-                <option value="stationery">Stationery & Office</option>
-                <option value="auto">Auto Care</option>
-                <option value="fashion">Fashion & Accessories</option>
-                <option value="electronics">Electronics</option>
-                <option value="books">Books & Education</option>
-              </select>
-            </div>
-          </div>
-          <div class="row" style="margin-top:8px">
-            <div>
-              <label>Retail Price (UGX)</label>
-              <input id="pRetail" type="number" placeholder="16000">
-            </div>
-            <div>
-              <label>Wholesale Price (UGX)</label>
-              <input id="pWholesale" type="number" placeholder="14000">
-            </div>
-          </div>
-          <div class="row" style="margin-top:8px">
-            <div>
-              <label>Unit</label>
-              <input id="pUnit" placeholder="bottle / bag / pack">
-            </div>
-            <div>
-              <label>MOQ (wholesale)</label>
-              <input id="pMoq" type="number" placeholder="12" value="1">
-            </div>
-          </div>
-          <div style="margin-top:8px">
-            <label>Description</label>
-            <textarea id="pDesc" rows="3" placeholder="Short description..."></textarea>
-          </div>
-          <div style="margin-top:12px">
-            <label>Images (up to 4)</label>
-            <div class="bar" style="margin:6px 0">
-              <input id="fileInput" type="file" accept="image/*" multiple>
-              <button class="button" onclick="document.getElementById('fileInput').click()">Choose Files</button>
-              <span class="muted small">Files will be uploaded to your repo's <code>/images/</code> folder.</span>
-            </div>
-            <div id="imgGrid" class="images"></div>
-          </div>
-          <div class="bar" style="margin-top:14px">
-            <button id="publishBtn" class="button primary">Publish to GitHub</button>
-            <button id="resetBtn" class="button">Reset Form</button>
-          </div>
-          <div id="status" class="muted small" style="margin-top:8px"></div>
-        </div>
+  <div class="card">
+    <div class="body">
+      <h2 style="margin:0 0 10px">Test GitHub Connection</h2>
+      <p class="small muted">First, let's test if we can connect to your repository.</p>
+      <div class="bar">
+        <button id="testConnectionBtn" class="button primary">Test Connection</button>
+        <button id="createRepoFilesBtn" class="button ok">Create Required Files</button>
       </div>
-
-      <!-- Right: Manage + preview + log -->
-      <div class="card">
-        <div class="body">
-          <h3 style="margin:0 0 10px">Manage Products (GitHub)</h3>
-          <div class="bar" style="margin-bottom:8px">
-            <button id="refreshBtn" class="button">Refresh List</button>
-            <label class="small" title="If checked, deleting a product will also remove its images from /images/">
-              <input type="checkbox" id="delImagesToggle"> also delete images
-            </label>
-          </div>
-          <div id="prodList" class="list"></div>
-
-          <h3 style="margin:16px 0 10px">Last Published Product (local preview)</h3>
-          <div id="preview" class="list"></div>
-
-          <h4 style="margin:14px 0 6px">Debug Log</h4>
-          <div id="log" class="code"></div>
-        </div>
-      </div>
+      <div id="connectionStatus" class="status-box">Not tested yet</div>
     </div>
   </div>
   
-  <div id="heroTab" class="tab-content" style="display:none;">
-    <div class="grid">
-      <div class="card">
-        <div class="body">
-          <h2 style="margin:0 0 10px">Update Hero Section</h2>
-          <div style="margin-top:8px">
-            <label>Hero Title</label>
-            <input id="heroTitle" placeholder="Orji Supplies - Your One-Stop Shop" value="Orji Supplies - Your One-Stop Shop">
-          </div>
-          <div style="margin-top:8px">
-            <label>Hero Subtitle</label>
-            <input id="heroSubtitle" placeholder="Quality Products at Wholesale Prices" value="Quality Products at Wholesale Prices">
-          </div>
-          <div style="margin-top:8px">
-            <label>Description</label>
-            <textarea id="heroDesc" rows="3" placeholder="Store description...">We supply everything from household essentials to electronics, books, and more. Serving both retail and wholesale customers across Uganda.</textarea>
-          </div>
-          <div style="margin-top:8px">
-            <label>Background Image</label>
-            <input id="heroBgInput" type="file" accept="image/*" style="margin-bottom:8px">
-            <input id="heroBgUrl" placeholder="https://raw.githubusercontent.com/.../hero-background.jpg" value="https://raw.githubusercontent.com/hunter9201/Orji-Supplies/main/images/hero-background.jpg">
-            <div class="bar" style="margin-top:6px">
-              <button class="button small" onclick="document.getElementById('heroBgInput').click()">Upload New</button>
-              <span class="muted small">Or paste URL above</span>
-            </div>
-          </div>
-          <div class="row" style="margin-top:8px">
-            <div>
-              <label>Phone Number</label>
-              <input id="heroPhone" placeholder="+256 700 123 456" value="+256 700 123 456">
-            </div>
-            <div>
-              <label>Email</label>
-              <input id="heroEmail" placeholder="info@orjisupplies.com" value="info@orjisupplies.com">
-            </div>
-          </div>
-          <div style="margin-top:8px">
-            <label>Address</label>
-            <input id="heroAddress" placeholder="Kampala Road, Kampala, Uganda" value="Kampala Road, Kampala, Uganda">
-          </div>
-          <div style="margin-top:8px">
-            <label>Business Hours</label>
-            <input id="heroHours" placeholder="Mon-Sat: 8:00 AM - 8:00 PM, Sun: 10:00 AM - 6:00 PM" value="Mon-Sat: 8:00 AM - 8:00 PM, Sun: 10:00 AM - 6:00 PM">
-          </div>
-          <div class="bar" style="margin-top:14px">
-            <button id="updateHeroBtn" class="button primary">Update Hero Section</button>
-            <button id="loadHeroBtn" class="button">Load Current</button>
-          </div>
-          <div id="heroStatus" class="muted small" style="margin-top:8px"></div>
+  <div class="card">
+    <div class="body">
+      <h2 style="margin:0 0 10px">Simple Product Upload</h2>
+      <div class="row">
+        <div>
+          <label>Product Name</label>
+          <input id="pName" placeholder="e.g., Harpic Power Plus 10X">
+        </div>
+        <div>
+          <label>Retail Price (UGX)</label>
+          <input id="pRetail" type="number" placeholder="16000">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Category</label>
+          <select id="pCat">
+            <option value="laundry">Laundry & Detergents</option>
+            <option value="cleaning">Cleaning Products</option>
+            <option value="pest">Pest Control</option>
+            <option value="home">Home & Kitchen</option>
+            <option value="personal">Personal Care</option>
+            <option value="baby">Baby Care</option>
+            <option value="drinks">Drinks & Beverages</option>
+            <option value="food">Food Items</option>
+            <option value="stationery">Stationery & Office</option>
+            <option value="auto">Auto Care</option>
+            <option value="fashion">Fashion & Accessories</option>
+            <option value="electronics">Electronics</option>
+            <option value="books">Books & Education</option>
+          </select>
+        </div>
+        <div>
+          <label>Description</label>
+          <input id="pDesc" placeholder="Short description">
         </div>
       </div>
       
-      <div class="card">
-        <div class="body">
-          <h3 style="margin:0 0 10px">Current Hero Data</h3>
-          <div id="heroPreview" class="code" style="min-height:200px;max-height:400px;overflow-y:auto;">
-            Loading hero data...
-          </div>
-          <div class="bar" style="margin-top:14px">
-            <button id="updateIndexBtn" class="button ok">Update index.html</button>
-            <span class="muted small">This updates the main website</span>
-          </div>
-        </div>
+      <div class="bar" style="margin-top:14px">
+        <button id="publishBtn" class="button primary" disabled>Publish Product</button>
+        <button id="resetBtn" class="button">Reset Form</button>
       </div>
+      <div id="status" class="muted small" style="margin-top:8px"></div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="body">
+      <h3 style="margin:0 0 10px">Debug Log</h3>
+      <div id="log" class="code"></div>
     </div>
   </div>
 </div>
 
 <!-- Token Modal -->
-<div id="tokenModal" class="modal-overlay" style="display:none;">
-  <div class="modal-content">
-    <h3>Set GitHub Token</h3>
-    <p>Paste your GitHub Personal Access Token below:</p>
-    <textarea id="tokenInput" class="token-input" rows="4" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+<div id="tokenModal" class="modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
+  <div class="modal-content" style="background:white;border-radius:12px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto">
+    <h3 style="margin:0 0 16px 0">Set GitHub Token</h3>
+    <p><strong>IMPORTANT:</strong> You need a GitHub Personal Access Token with <code>repo</code> permission.</p>
+    <textarea id="tokenInput" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;font-family:monospace;margin-bottom:8px" rows="4" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"></textarea>
     
-    <div class="instruction">
-      <p><strong>How to get a token:</strong></p>
-      <ol style="margin: 8px 0 8px 20px; padding: 0;">
-        <li>Go to GitHub → Settings → Developer settings</li>
-        <li>Click "Personal access tokens" → "Fine-grained tokens"</li>
-        <li>Click "Generate new token"</li>
-        <li>Select your repository (<code>hunter9201/Orji-Supplies</code>)</li>
-        <li>Set permissions: <strong>Contents (Read and write)</strong></li>
-        <li>Generate token and paste it here</li>
+    <div class="instruction" style="font-size:14px;color:var(--muted);margin-top:8px;line-height:1.4">
+      <p><strong>How to create token:</strong></p>
+      <ol style="margin:8px 0 8px 20px;padding:0">
+        <li>Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Tokens</a></li>
+        <li>Click "Generate new token" → "Generate new token (classic)"</li>
+        <li>Give it a name like "Orji Supplies Admin"</li>
+        <li>Select <strong>repo</strong> permission (full control of private repositories)</li>
+        <li>Click "Generate token"</li>
+        <li>Copy the token and paste it here</li>
       </ol>
-      <p><strong>Note:</strong> The token is stored only in your browser's local storage.</p>
+      <p><strong>Note:</strong> Token is stored only in your browser.</p>
     </div>
     
-    <div class="modal-actions">
+    <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px">
       <button id="cancelTokenBtn" class="button">Cancel</button>
       <button id="saveTokenBtn" class="button primary">Save Token</button>
     </div>
@@ -333,108 +145,85 @@
 </div>
 
 <script>
-/* ======== EDIT THESE 5 LINES TO MATCH YOUR REPO ======== */
+// ======== CONFIGURATION ========
 const GH_OWNER = "hunter9201";
 const GH_REPO = "Orji-Supplies";
 const GH_BRANCH = "main";
-const GH_IMAGES_DIR = "images";          // folder in repo
-const GH_PRODUCTS_PATH = "products.json"; // file in repo root
-const GH_HERO_PATH = "hero.json";         // hero data file
-const GH_INDEX_PATH = "index.html";       // main website file
-/* ======================================================= */
-
-// Token storage key
+const GH_IMAGES_DIR = "images";
+const GH_PRODUCTS_PATH = "products.json";
 const TOKEN_KEY = "ORJI_GH_TOKEN_V1";
 
-// UI refs
+// ======== UI ELEMENTS ========
 const tokenState = document.getElementById('tokenState');
 const setTokenBtn = document.getElementById('setTokenBtn');
 const clearTokenBtn = document.getElementById('clearTokenBtn');
-const fileInput = document.getElementById('fileInput');
-const imgGrid = document.getElementById('imgGrid');
+const debugInfo = document.getElementById('debugInfo');
+const testConnectionBtn = document.getElementById('testConnectionBtn');
+const createRepoFilesBtn = document.getElementById('createRepoFilesBtn');
+const connectionStatus = document.getElementById('connectionStatus');
 const publishBtn = document.getElementById('publishBtn');
 const resetBtn = document.getElementById('resetBtn');
 const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
-const previewEl = document.getElementById('preview');
 
-// Hero section refs
-const heroTitle = document.getElementById('heroTitle');
-const heroSubtitle = document.getElementById('heroSubtitle');
-const heroDesc = document.getElementById('heroDesc');
-const heroBgInput = document.getElementById('heroBgInput');
-const heroBgUrl = document.getElementById('heroBgUrl');
-const heroPhone = document.getElementById('heroPhone');
-const heroEmail = document.getElementById('heroEmail');
-const heroAddress = document.getElementById('heroAddress');
-const heroHours = document.getElementById('heroHours');
-const updateHeroBtn = document.getElementById('updateHeroBtn');
-const loadHeroBtn = document.getElementById('loadHeroBtn');
-const heroStatus = document.getElementById('heroStatus');
-const heroPreview = document.getElementById('heroPreview');
-const updateIndexBtn = document.getElementById('updateIndexBtn');
+// Form elements
+const pName = document.getElementById('pName');
+const pCat = document.getElementById('pCat');
+const pRetail = document.getElementById('pRetail');
+const pDesc = document.getElementById('pDesc');
 
-// Tab refs
-const tabs = document.querySelectorAll('.tab');
-const tabContents = document.querySelectorAll('.tab-content');
-
-// Token modal refs
+// Token modal elements
 const tokenModal = document.getElementById('tokenModal');
 const tokenInput = document.getElementById('tokenInput');
 const saveTokenBtn = document.getElementById('saveTokenBtn');
 const cancelTokenBtn = document.getElementById('cancelTokenBtn');
 
-const refreshBtn = document.getElementById('refreshBtn');
-const prodList = document.getElementById('prodList');
-const delImagesToggle = document.getElementById('delImagesToggle');
-
-// Form refs
-const pName = document.getElementById('pName');
-const pCat = document.getElementById('pCat');
-const pRetail = document.getElementById('pRetail');
-const pWholesale = document.getElementById('pWholesale');
-const pUnit = document.getElementById('pUnit');
-const pMoq = document.getElementById('pMoq');
-const pDesc = document.getElementById('pDesc');
-
-let files = []; // selected images
-let heroBgFile = null; // hero background image file
-
-function log(msg){ logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; }
-function setStatus(msg){ statusEl.textContent = msg; }
-function setHeroStatus(msg){ heroStatus.textContent = msg; }
-function token(){ return localStorage.getItem(TOKEN_KEY) || ""; }
-function tokenOk(){ 
-  const t = token(); 
-  tokenState.textContent = t ? "Token set" : "No token"; 
-  tokenState.style.background = t ? "#dcfce7" : "#0ea5e90f"; 
-  tokenState.style.borderColor = t ? "#86efac" : "#bae6fd";
+// ======== UTILITY FUNCTIONS ========
+function log(msg) { 
+  const timestamp = new Date().toLocaleTimeString();
+  logEl.textContent += `[${timestamp}] ${msg}\n`; 
+  logEl.scrollTop = logEl.scrollHeight; 
 }
 
-// Tab switching
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const tabName = tab.dataset.tab;
-    
-    // Update tabs
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    
-    // Show corresponding content
-    tabContents.forEach(content => {
-      content.classList.remove('active');
-      content.style.display = 'none';
-    });
-    
-    document.getElementById(tabName + 'Tab').classList.add('active');
-    document.getElementById(tabName + 'Tab').style.display = 'block';
-  });
-});
+function setStatus(msg) { 
+  statusEl.textContent = msg; 
+  statusEl.style.color = 'var(--ink)';
+}
 
-// Token modal functions
+function setError(msg) {
+  statusEl.textContent = msg;
+  statusEl.style.color = 'var(--bad)';
+}
+
+function setSuccess(msg) {
+  statusEl.textContent = msg;
+  statusEl.style.color = 'var(--ok)';
+}
+
+function token() { 
+  return localStorage.getItem(TOKEN_KEY) || ""; 
+}
+
+function tokenOk() { 
+  const t = token(); 
+  if (t) {
+    tokenState.textContent = "✓ Token set"; 
+    tokenState.style.background = "#dcfce7";
+    tokenState.style.borderColor = "#86efac";
+    tokenState.style.color = "#166534";
+  } else {
+    tokenState.textContent = "✗ No token"; 
+    tokenState.style.background = "#fef2f2";
+    tokenState.style.borderColor = "#fecaca";
+    tokenState.style.color = "#991b1b";
+  }
+  publishBtn.disabled = !t;
+}
+
+// ======== TOKEN MODAL ========
 function showTokenModal() {
   tokenModal.style.display = 'flex';
-  tokenInput.value = token(); // Pre-fill with existing token if any
+  tokenInput.value = token();
   tokenInput.focus();
   tokenInput.select();
 }
@@ -449,13 +238,13 @@ function saveToken() {
     localStorage.setItem(TOKEN_KEY, t);
     tokenOk();
     log("GitHub token saved.");
+    testConnection(); // Test connection after saving token
   }
   hideTokenModal();
 }
 
-// Event listeners for token modal
 setTokenBtn.onclick = showTokenModal;
-clearTokenBtn.onclick = ()=>{ 
+clearTokenBtn.onclick = () => { 
   if (confirm("Clear your GitHub token?")) {
     localStorage.removeItem(TOKEN_KEY); 
     tokenOk(); 
@@ -464,448 +253,354 @@ clearTokenBtn.onclick = ()=>{
 };
 saveTokenBtn.onclick = saveToken;
 cancelTokenBtn.onclick = hideTokenModal;
-
-// Close modal when clicking outside
 tokenModal.addEventListener('click', (e) => {
-  if (e.target === tokenModal) {
-    hideTokenModal();
-  }
+  if (e.target === tokenModal) hideTokenModal();
 });
 
-// Hero background image upload
-heroBgInput.addEventListener('change', (e) => {
-  if (e.target.files.length > 0) {
-    heroBgFile = e.target.files[0];
-    setHeroStatus("Background image selected. Click 'Update Hero Section' to upload.");
-  }
-});
-
-// file selection for products
-fileInput.addEventListener('change', (e)=>{
-  files = Array.from(e.target.files||[]).slice(0,4);
-  renderFiles();
-});
-
-function renderFiles(){
-  imgGrid.innerHTML = files.map((f,i)=>`
-    <div class="preview">
-      <img src="${URL.createObjectURL(f)}" alt="">
-      <button class="button bad rm small" onclick="removeFile(${i})">x</button>
-    </div>
-  `).join('') || '<span class="muted small">No files selected.</span>';
-}
-
-window.removeFile = (i)=>{ files.splice(i,1); renderFiles(); };
-
-// GitHub helpers
+// ======== GITHUB API FUNCTIONS ========
 const API_BASE = "https://api.github.com";
-function ghHeaders(){ return { "Authorization":"Bearer "+token(), "Accept":"application/vnd.github+json" }; }
 
-async function ghGetContents(path){
-  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(GH_BRANCH)}`;
-  const r = await fetch(url, {headers: ghHeaders()});
-  if (r.status === 404) return {status:404};
-  if (!r.ok) throw new Error(`GET ${path} failed: ${r.status} ${await r.text()}`);
-  return await r.json(); // includes .sha, .content (base64) for files
+function ghHeaders() { 
+  return { 
+    "Authorization": "Bearer " + token(), 
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  }; 
 }
 
-async function ghPutContents(path, base64Content, message, sha=null){
+async function ghGetContents(path) {
+  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}?ref=${GH_BRANCH}`;
+  log(`GET ${path}`);
+  
+  try {
+    const r = await fetch(url, { headers: ghHeaders() });
+    if (r.status === 404) {
+      log(`✗ ${path} not found (404)`);
+      return { status: 404 };
+    }
+    if (!r.ok) {
+      const errorText = await r.text();
+      log(`✗ GET failed: ${r.status} ${errorText}`);
+      throw new Error(`GET ${path} failed: ${r.status}`);
+    }
+    
+    const data = await r.json();
+    log(`✓ ${path} loaded successfully`);
+    return data;
+  } catch (error) {
+    log(`✗ Network error: ${error.message}`);
+    throw error;
+  }
+}
+
+async function ghPutContents(path, content, message, sha = null) {
   const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}`;
-  const body = { message, content: base64Content, branch: GH_BRANCH };
+  const body = { 
+    message, 
+    content: btoa(unescape(encodeURIComponent(content))), 
+    branch: GH_BRANCH 
+  };
+  
   if (sha) body.sha = sha;
-  const r = await fetch(url, {
-    method: "PUT",
-    headers: {...ghHeaders(), "Content-Type":"application/json"},
-    body: JSON.stringify(body)
-  });
-  if (!r.ok) throw new Error(`PUT ${path} failed: ${r.status} ${await r.text()}`);
-  return await r.json();
-}
-
-async function ghDeleteContents(path, message, sha){
-  const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}`;
-  const r = await fetch(url, {
-    method: "DELETE",
-    headers: {...ghHeaders(), "Content-Type":"application/json"},
-    body: JSON.stringify({ message, sha, branch: GH_BRANCH })
-  });
-  if (!r.ok) throw new Error(`DELETE ${path} failed: ${r.status} ${await r.text()}`);
-  return await r.json();
-}
-
-function toBase64Utf8(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-
-function fileToBase64(file){
-  return new Promise((res,rej)=>{
-    const fr = new FileReader();
-    fr.onload = ()=>{
-      const arr = new Uint8Array(fr.result);
-      let bin = "";
-      for (let i=0;i<arr.length;i++) bin += String.fromCharCode(arr[i]);
-      res(btoa(bin));
-    };
-    fr.onerror = ()=>rej(fr.error);
-    fr.readAsArrayBuffer(file);
-  });
-}
-
-function slugify(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50) || "item"; }
-
-// ===== PUBLISH PRODUCT flow =====
-publishBtn.onclick = async ()=>{
-  try{
-    if (!token()){ 
-      alert("Set your GitHub token first."); 
-      showTokenModal();
-      return; 
-    }
-    const name = pName.value.trim();
-    if (!name){ alert("Enter product name."); return; }
-    if (!pRetail.value){ alert("Enter retail price."); return; }
-
-    setStatus("Uploading images...");
-    log("== Start publish ==");
-    const ts = Date.now();
-    const baseSlug = `${slugify(name)}-${ts}`;
-    const rawUrls = [];
-
-    for (let i=0;i<files.length;i++){
-      const f = files[i];
-      const ext = (f.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'') || "bin";
-      const fname = `${baseSlug}-${i+1}.${ext}`;
-      const path = `${GH_IMAGES_DIR}/${fname}`;
-      const b64 = await fileToBase64(f);
-      await ghPutContents(path, b64, `Upload image ${fname}`);
-      const url = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(GH_IMAGES_DIR)}/${encodeURIComponent(fname)}`;
-      rawUrls.push(url);
-      log(`Uploaded ${path}`);
-    }
-    if (rawUrls.length === 0){ log("No images selected; continuing."); }
-
-    setStatus("Updating products.json...");
-    let arr = [];
-    let sha = null;
-    const got = await ghGetContents(GH_PRODUCTS_PATH);
-    if (got.status !== 404){
-      sha = got.sha;
-      const content = atob(got.content.replace(/\n/g,''));
-      const text = decodeURIComponent(escape(content));
-      try{ arr = JSON.parse(text); if (!Array.isArray(arr)) arr = []; } catch(e){ arr = []; }
-      log("Loaded existing products.json");
-    } else {
-      log("products.json does not exist; will create.");
-    }
-
-    const product = {
-      id: baseSlug,
-      name,
-      category: pCat.value,
-      retailPrice: Number(pRetail.value)||0,
-      wholesalePrice: Number(pWholesale.value)||0,
-      unit: pUnit.value.trim()||"piece",
-      moq: Number(pMoq.value)||1,
-      desc: pDesc.value.trim(),
-      imgs: rawUrls
-    };
-    arr.push(product);
-
-    const jsonStr = JSON.stringify(arr, null, 2);
-    const b64 = toBase64Utf8(jsonStr);
-    await ghPutContents(GH_PRODUCTS_PATH, b64, `Add product ${product.id}`, sha||undefined);
-    log("products.json updated.");
-
-    setStatus("Done! Product published to GitHub.");
-    previewEl.innerHTML = `
-      <div class="item">
-        <div><strong>${product.name}</strong> — UGX ${product.retailPrice.toLocaleString('en-UG')}</div>
-        <div class="muted small">${product.desc||''}</div>
-        <div class="muted small">Images: ${product.imgs.length}</div>
-      </div>`;
-    alert("Published! Open your shop (index.html). If it's already open, refresh it.");
-    // Refresh product list after publish
-    await refreshProductsList();
-  }catch(err){
-    console.error(err);
-    log(String(err));
-    setStatus("Error: " + err.message);
-    alert("Publish failed:\n" + err.message);
-  }
-};
-
-resetBtn.onclick = ()=>{
-  pName.value = ""; pRetail.value=""; pWholesale.value=""; pUnit.value=""; pMoq.value="1"; pDesc.value="";
-  files = []; renderFiles(); setStatus("");
-};
-
-// ===== HERO SECTION flow =====
-async function loadHeroData() {
+  
+  log(`PUT ${path}: ${message}`);
+  
   try {
-    setHeroStatus("Loading hero data...");
-    const got = await ghGetContents(GH_HERO_PATH);
-    if (got.status === 404) {
-      heroPreview.textContent = "hero.json not found. Using default values.";
-      return null;
+    const r = await fetch(url, {
+      method: "PUT",
+      headers: { ...ghHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    
+    if (!r.ok) {
+      const errorText = await r.text();
+      log(`✗ PUT failed: ${r.status} ${errorText}`);
+      throw new Error(`PUT ${path} failed: ${r.status} ${errorText}`);
     }
     
-    const sha = got.sha;
-    const content = atob(got.content.replace(/\n/g,''));
-    const text = decodeURIComponent(escape(content));
-    const heroData = JSON.parse(text);
-    
-    // Update form fields
-    heroTitle.value = heroData.hero?.title || "";
-    heroSubtitle.value = heroData.hero?.subtitle || "";
-    heroDesc.value = heroData.hero?.description || "";
-    heroBgUrl.value = heroData.hero?.backgroundImage || "";
-    heroPhone.value = heroData.contactInfo?.phone || "";
-    heroEmail.value = heroData.contactInfo?.email || "";
-    heroAddress.value = heroData.contactInfo?.address || "";
-    heroHours.value = heroData.contactInfo?.businessHours || "";
-    
-    // Show preview
-    heroPreview.textContent = JSON.stringify(heroData, null, 2);
-    setHeroStatus("Hero data loaded successfully.");
-    return { data: heroData, sha };
-  } catch(err) {
-    heroPreview.textContent = "Error loading hero.json: " + err.message;
-    setHeroStatus("Error loading hero data.");
-    return null;
+    const data = await r.json();
+    log(`✓ ${path} updated successfully`);
+    return data;
+  } catch (error) {
+    log(`✗ Network error: ${error.message}`);
+    throw error;
   }
 }
 
-async function updateHeroData() {
-  try {
-    if (!token()){ 
-      alert("Set your GitHub token first."); 
-      showTokenModal();
-      return; 
-    }
-    
-    setHeroStatus("Updating hero section...");
-    
-    // Upload background image if new one is selected
-    let bgUrl = heroBgUrl.value;
-    if (heroBgFile) {
-      const ts = Date.now();
-      const ext = (heroBgFile.name.split('.').pop()||'jpg').toLowerCase();
-      const fname = `hero-bg-${ts}.${ext}`;
-      const path = `${GH_IMAGES_DIR}/${fname}`;
-      const b64 = await fileToBase64(heroBgFile);
-      await ghPutContents(path, b64, `Upload hero background image`);
-      bgUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(GH_IMAGES_DIR)}/${encodeURIComponent(fname)}`;
-      heroBgUrl.value = bgUrl;
-      heroBgFile = null;
-      log(`Uploaded hero background: ${path}`);
-    }
-    
-    // Load existing hero data or create new
-    let heroData = {};
-    let sha = null;
-    const got = await ghGetContents(GH_HERO_PATH);
-    if (got.status !== 404){
-      sha = got.sha;
-      const content = atob(got.content.replace(/\n/g,''));
-      const text = decodeURIComponent(escape(content));
-      heroData = JSON.parse(text);
-    }
-    
-    // Update hero data structure
-    heroData.hero = heroData.hero || {};
-    heroData.hero.title = heroTitle.value;
-    heroData.hero.subtitle = heroSubtitle.value;
-    heroData.hero.description = heroDesc.value;
-    heroData.hero.backgroundImage = bgUrl;
-    
-    heroData.contactInfo = heroData.contactInfo || {};
-    heroData.contactInfo.phone = heroPhone.value;
-    heroData.contactInfo.email = heroEmail.value;
-    heroData.contactInfo.address = heroAddress.value;
-    heroData.contactInfo.businessHours = heroHours.value;
-    
-    // Update JSON file
-    const jsonStr = JSON.stringify(heroData, null, 2);
-    const b64 = toBase64Utf8(jsonStr);
-    await ghPutContents(GH_HERO_PATH, b64, `Update hero section`, sha||undefined);
-    
-    heroPreview.textContent = JSON.stringify(heroData, null, 2);
-    setHeroStatus("Hero section updated successfully!");
-    alert("Hero section updated! Refresh your store to see changes.");
-    
-  } catch(err) {
-    console.error(err);
-    setHeroStatus("Error: " + err.message);
-    alert("Update failed:\n" + err.message);
-  }
+async function ghCreateFile(path, content, message) {
+  return ghPutContents(path, content, message);
 }
 
-async function updateIndexHtml() {
-  try {
-    if (!token()){ 
-      alert("Set your GitHub token first."); 
-      showTokenModal();
-      return; 
-    }
-    
-    if (!confirm("This will update the main index.html file. Continue?")) return;
-    
-    setHeroStatus("Updating index.html...");
-    
-    // Get current index.html
-    const got = await ghGetContents(GH_INDEX_PATH);
-    if (got.status === 404) {
-      throw new Error("index.html not found in repository");
-    }
-    
-    const sha = got.sha;
-    const content = atob(got.content.replace(/\n/g,''));
-    const text = decodeURIComponent(escape(content));
-    
-    // Update index.html with current timestamp in a comment
-    const updatedText = text.replace(
-      /<!-- Last updated: .*? -->/,
-      `<!-- Last updated: ${new Date().toLocaleString()} -->`
-    );
-    
-    const b64 = toBase64Utf8(updatedText);
-    await ghPutContents(GH_INDEX_PATH, b64, `Update index.html`, sha);
-    
-    setHeroStatus("index.html updated successfully!");
-    alert("Website updated! Refresh your store to see changes.");
-    
-  } catch(err) {
-    console.error(err);
-    setHeroStatus("Error: " + err.message);
-    alert("Update failed:\n" + err.message);
-  }
-}
-
-// Wire up hero section buttons
-updateHeroBtn.addEventListener('click', updateHeroData);
-loadHeroBtn.addEventListener('click', loadHeroData);
-updateIndexBtn.addEventListener('click', updateIndexHtml);
-
-// ===== PRODUCT MANAGEMENT =====
-function filenameFromRawUrl(u){
-  try{
-    const url = new URL(u);
-    const name = url.pathname.split('/').pop() || "";
-    return decodeURIComponent(name);
-  }catch{ return ""; }
-}
-
-function renderProductsAdmin(arr){
-  if (!Array.isArray(arr) || !arr.length){
-    prodList.innerHTML = '<div class="muted small">No products found in products.json.</div>';
+// ======== TEST CONNECTION ========
+async function testConnection() {
+  if (!token()) {
+    connectionStatus.innerHTML = '<span style="color:var(--bad)">No token set. Click "Set GitHub Token" first.</span>';
     return;
   }
-  prodList.innerHTML = arr.map(p=>`
-    <div class="item" data-id="${p.id}">
-      <div class="bar" style="justify-content:space-between;align-items:flex-start">
-        <div>
-          <div><strong>${p.name}</strong> <span class="muted small">(${p.id})</span></div>
-          <div class="muted small">Cat: ${p.category||'-'} • Retail: UGX ${(p.retailPrice||0).toLocaleString('en-UG')} • Images: ${(p.imgs||[]).length}</div>
-          <div class="muted small">${p.desc ? p.desc.slice(0,120) : ''}</div>
-        </div>
-        <div class="bar">
-          <button class="button bad" data-action="delete" data-id="${p.id}">Delete</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function loadProductsJson(){
-  const got = await ghGetContents(GH_PRODUCTS_PATH);
-  if (got.status === 404) return { arr: [], sha: null };
-  const sha = got.sha;
-  const content = atob(got.content.replace(/\n/g,''));
-  const text = decodeURIComponent(escape(content));
-  let arr = [];
-  try{ arr = JSON.parse(text); if (!Array.isArray(arr)) arr = []; } catch(e){ arr = []; }
-  return { arr, sha };
-}
-
-async function refreshProductsList(){
-  try{
-    setStatus("Loading products from GitHub…");
-    const { arr } = await loadProductsJson();
-    renderProductsAdmin(arr);
-    setStatus("Ready.");
-  }catch(err){
-    log("Load list error: " + err.message);
-    setStatus("Error loading list.");
+  
+  connectionStatus.innerHTML = 'Testing connection to GitHub...';
+  log("=== Testing GitHub Connection ===");
+  
+  try {
+    // Test 1: Check if repository exists
+    const repoUrl = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}`;
+    log(`Testing repository: ${GH_OWNER}/${GH_REPO}`);
+    
+    const repoResponse = await fetch(repoUrl, { headers: ghHeaders() });
+    
+    if (!repoResponse.ok) {
+      if (repoResponse.status === 404) {
+        connectionStatus.innerHTML = `<span style="color:var(--bad)">Repository not found: ${GH_OWNER}/${GH_REPO}</span>`;
+        log(`✗ Repository not found: ${GH_OWNER}/${GH_REPO}`);
+        return;
+      } else if (repoResponse.status === 401 || repoResponse.status === 403) {
+        connectionStatus.innerHTML = `<span style="color:var(--bad)">Authentication failed. Check your token permissions.</span>`;
+        log(`✗ Authentication failed: ${repoResponse.status}`);
+        return;
+      }
+      throw new Error(`Repository check failed: ${repoResponse.status}`);
+    }
+    
+    log(`✓ Repository exists: ${GH_OWNER}/${GH_REPO}`);
+    
+    // Test 2: Check if products.json exists
+    const productsData = await ghGetContents(GH_PRODUCTS_PATH);
+    
+    if (productsData.status === 404) {
+      connectionStatus.innerHTML = `<span style="color:var(--muted)">✓ Connected to GitHub. products.json not found (will create it).</span>`;
+      log("✓ Connection successful!");
+    } else {
+      connectionStatus.innerHTML = `<span style="color:var(--ok)">✓ Connected to GitHub! Found products.json with ${JSON.parse(atob(productsData.content)).length} products.</span>`;
+      log("✓ Connection successful!");
+    }
+    
+    publishBtn.disabled = false;
+    
+  } catch (error) {
+    connectionStatus.innerHTML = `<span style="color:var(--bad)">Connection failed: ${error.message}</span>`;
+    log(`✗ Connection test failed: ${error.message}`);
+    publishBtn.disabled = true;
   }
 }
 
-async function deleteProduct(productId, alsoDeleteImages){
-  if (!token()){ alert("Set your GitHub token first."); showTokenModal(); return; }
-  if (!confirm(`Delete product "${productId}"${alsoDeleteImages ? " and its images" : ""}? This cannot be undone.`)) return;
+// ======== CREATE REQUIRED FILES ========
+async function createRequiredFiles() {
+  if (!token()) {
+    alert("Set your GitHub token first.");
+    showTokenModal();
+    return;
+  }
+  
+  log("=== Creating Required Files ===");
+  connectionStatus.innerHTML = 'Creating files...';
+  
+  try {
+    // 1. Create products.json if it doesn't exist
+    const productsCheck = await ghGetContents(GH_PRODUCTS_PATH);
+    if (productsCheck.status === 404) {
+      const initialProducts = [
+        {
+          "id": "sample-product-" + Date.now(),
+          "name": "Sample Product",
+          "category": "home",
+          "retailPrice": 10000,
+          "wholesalePrice": 8000,
+          "unit": "piece",
+          "moq": 1,
+          "desc": "This is a sample product",
+          "imgs": []
+        }
+      ];
+      
+      await ghCreateFile(
+        GH_PRODUCTS_PATH,
+        JSON.stringify(initialProducts, null, 2),
+        "Create products.json file"
+      );
+      log("✓ Created products.json");
+    } else {
+      log("✓ products.json already exists");
+    }
+    
+    // 2. Create hero.json if it doesn't exist
+    const heroCheck = await ghGetContents("hero.json");
+    if (heroCheck.status === 404) {
+      const heroData = {
+        "hero": {
+          "title": "Orji Supplies - Your One-Stop Shop",
+          "subtitle": "Quality Products at Wholesale Prices",
+          "description": "We supply everything from household essentials to electronics, books, and more.",
+          "backgroundImage": "",
+          "ctaButton": {
+            "text": "Shop Now",
+            "link": "#products"
+          }
+        },
+        "contactInfo": {
+          "phone": "+256 700 123 456",
+          "email": "info@orjisupplies.com",
+          "address": "Kampala Road, Kampala, Uganda",
+          "businessHours": "Mon-Sat: 8:00 AM - 8:00 PM"
+        }
+      };
+      
+      await ghCreateFile(
+        "hero.json",
+        JSON.stringify(heroData, null, 2),
+        "Create hero.json file"
+      );
+      log("✓ Created hero.json");
+    } else {
+      log("✓ hero.json already exists");
+    }
+    
+    connectionStatus.innerHTML = `<span style="color:var(--ok)">✓ Required files created successfully!</span>`;
+    log("✓ All required files created");
+    
+    // Test connection again to update status
+    setTimeout(testConnection, 1000);
+    
+  } catch (error) {
+    connectionStatus.innerHTML = `<span style="color:var(--bad)">Failed to create files: ${error.message}</span>`;
+    log(`✗ File creation failed: ${error.message}`);
+  }
+}
 
-  setStatus("Deleting…");
-  log(`== Delete ${productId} ==`);
-  const { arr, sha } = await loadProductsJson();
-  const idx = arr.findIndex(p => p.id === productId);
-  if (idx === -1){ alert("Product not found."); return; }
-  const product = arr[idx];
-
-  // Optionally delete images
-  if (alsoDeleteImages && Array.isArray(product.imgs)){
-    for (const u of product.imgs){
-      const fname = filenameFromRawUrl(u);
-      if (!fname) { log(`Skip image (no filename): ${u}`); continue; }
-      const path = `${GH_IMAGES_DIR}/${fname}`;
-      try{
-        const got = await ghGetContents(path);
-        if (got.status === 404){ log(`Image not found in repo: ${path}`); continue; }
-        await ghDeleteContents(path, `Delete image ${fname} (product ${productId})`, got.sha);
-        log(`Deleted image: ${path}`);
-      }catch(e){
-        log(`Failed to delete image ${path}: ${e.message}`);
+// ======== PUBLISH PRODUCT ========
+async function publishProduct() {
+  if (!token()) {
+    alert("Set your GitHub token first.");
+    showTokenModal();
+    return;
+  }
+  
+  const name = pName.value.trim();
+  const price = pRetail.value.trim();
+  const category = pCat.value;
+  const desc = pDesc.value.trim();
+  
+  if (!name) {
+    alert("Enter product name.");
+    pName.focus();
+    return;
+  }
+  
+  if (!price) {
+    alert("Enter retail price.");
+    pRetail.focus();
+    return;
+  }
+  
+  log("=== Publishing Product ===");
+  setStatus("Starting publish...");
+  
+  try {
+    // 1. Load existing products
+    setStatus("Loading products.json...");
+    const productsData = await ghGetContents(GH_PRODUCTS_PATH);
+    
+    let products = [];
+    let sha = null;
+    
+    if (productsData.status === 404) {
+      log("products.json not found, will create new file");
+    } else {
+      sha = productsData.sha;
+      const content = atob(productsData.content.replace(/\n/g, ''));
+      try {
+        products = JSON.parse(content);
+        if (!Array.isArray(products)) products = [];
+        log(`Loaded ${products.length} existing products`);
+      } catch (e) {
+        log(`Error parsing products.json: ${e.message}`);
+        products = [];
       }
     }
+    
+    // 2. Create new product
+    const newProduct = {
+      id: `product-${Date.now()}`,
+      name: name,
+      category: category,
+      retailPrice: parseInt(price) || 0,
+      wholesalePrice: Math.floor(parseInt(price) * 0.8) || 0,
+      unit: "piece",
+      moq: 1,
+      desc: desc || "No description",
+      imgs: []
+    };
+    
+    // 3. Add to products array
+    products.push(newProduct);
+    
+    // 4. Save back to GitHub
+    setStatus("Uploading to GitHub...");
+    await ghPutContents(
+      GH_PRODUCTS_PATH,
+      JSON.stringify(products, null, 2),
+      `Add product: ${name}`,
+      sha
+    );
+    
+    setSuccess(`✓ Product "${name}" published successfully!`);
+    log(`✓ Product published with ID: ${newProduct.id}`);
+    
+    // 5. Reset form
+    resetForm();
+    
+    // 6. Show success message
+    alert(`Product "${name}" has been published to GitHub!\n\nYou can view it at: https://github.com/${GH_OWNER}/${GH_REPO}/blob/${GH_BRANCH}/${GH_PRODUCTS_PATH}`);
+    
+    // 7. Test connection again to refresh status
+    setTimeout(testConnection, 1000);
+    
+  } catch (error) {
+    setError(`✗ Publish failed: ${error.message}`);
+    log(`✗ Publish error: ${error.message}`);
+    alert(`Publish failed:\n\n${error.message}`);
   }
-
-  // Remove product from array and write back
-  const newArr = arr.filter(p => p.id !== productId);
-  const jsonStr = JSON.stringify(newArr, null, 2);
-  const b64 = toBase64Utf8(jsonStr);
-  await ghPutContents(GH_PRODUCTS_PATH, b64, `Delete product ${productId}`, sha||undefined);
-  log(`Removed ${productId} from products.json`);
-  setStatus("Deleted.");
-
-  await refreshProductsList();
 }
 
-// Wire up UI
-refreshBtn.addEventListener('click', refreshProductsList);
-prodList.addEventListener('click', async (e)=>{
-  const btn = e.target.closest('button[data-action="delete"]');
-  if (!btn) return;
-  const id = btn.dataset.id;
-  const also = !!delImagesToggle.checked;
-  try{
-    await deleteProduct(id, also);
-  }catch(err){
-    log("Delete error: " + err.message);
-    alert("Delete failed:\n" + err.message);
-  }
-});
+// ======== RESET FORM ========
+function resetForm() {
+  pName.value = "";
+  pRetail.value = "";
+  pDesc.value = "";
+  pCat.selectedIndex = 0;
+  setStatus("");
+}
 
-// Initialize
-tokenOk();
-renderFiles();
-refreshProductsList(); // load list on open
-loadHeroData(); // load hero data on open
-
-// Add keyboard shortcut for token modal (Ctrl/Cmd + T)
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-    e.preventDefault();
-    showTokenModal();
+// ======== INITIALIZATION ========
+function initialize() {
+  // Update debug info
+  debugInfo.innerHTML = `
+    <strong>Debug Info:</strong><br>
+    Repository: <code>${GH_OWNER}/${GH_REPO}</code><br>
+    Branch: <code>${GH_BRANCH}</code><br>
+    Products file: <code>${GH_PRODUCTS_PATH}</code><br>
+    Token: ${token() ? "✓ Set" : "✗ Not set"}
+  `;
+  
+  // Set up event listeners
+  testConnectionBtn.onclick = testConnection;
+  createRepoFilesBtn.onclick = createRequiredFiles;
+  publishBtn.onclick = publishProduct;
+  resetBtn.onclick = resetForm;
+  
+  // Check token status
+  tokenOk();
+  
+  // Auto-test connection if token exists
+  if (token()) {
+    setTimeout(testConnection, 500);
   }
-});
+  
+  log("Admin panel initialized");
+  log(`Target: ${GH_OWNER}/${GH_REPO}`);
+}
+
+// ======== START APPLICATION ========
+window.addEventListener('load', initialize);
 </script>
 </body>
 </html>
