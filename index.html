@@ -32,6 +32,11 @@
   .list .item{border:1px dashed var(--line);border-radius:10px;padding:10px}
   .code{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--line);padding:10px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
   
+  /* Tabs */
+  .tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .tab{flex:1;text-align:center;padding:12px;background:none;border:none;cursor:pointer;font-weight:700;color:var(--muted);border-bottom:3px solid transparent}
+  .tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+  
   /* Token modal styles */
   .modal-overlay {
     position: fixed;
@@ -134,93 +139,167 @@
 </header>
 
 <div class="wrap">
-  <div class="grid">
-    <!-- Left: Form -->
-    <div class="card">
-      <div class="body">
-        <h2 style="margin:0 0 10px">New Product</h2>
-        <div class="row">
-          <div>
-            <label>Product Name</label>
-            <input id="pName" placeholder="e.g., Harpic Power Plus 10X">
+  <div class="tabs">
+    <button class="tab active" data-tab="products">Products</button>
+    <button class="tab" data-tab="hero">Hero Section</button>
+  </div>
+  
+  <div id="productsTab" class="tab-content active">
+    <div class="grid">
+      <!-- Left: Form -->
+      <div class="card">
+        <div class="body">
+          <h2 style="margin:0 0 10px">New Product</h2>
+          <div class="row">
+            <div>
+              <label>Product Name</label>
+              <input id="pName" placeholder="e.g., Harpic Power Plus 10X">
+            </div>
+            <div>
+              <label>Category</label>
+              <select id="pCat">
+                <option value="laundry">Laundry & Detergents</option>
+                <option value="cleaning">Cleaning Products</option>
+                <option value="pest">Pest Control</option>
+                <option value="home">Home & Kitchen</option>
+                <option value="personal">Personal Care</option>
+                <option value="baby">Baby Care</option>
+                <option value="drinks">Drinks & Beverages</option>
+                <option value="food">Food Items</option>
+                <option value="stationery">Stationery & Office</option>
+                <option value="auto">Auto Care</option>
+                <option value="fashion">Fashion & Accessories</option>
+                <option value="electronics">Electronics</option>
+                <option value="books">Books & Education</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label>Category</label>
-            <select id="pCat">
-              <option value="laundry">Laundry & Detergents</option>
-              <option value="cleaning">Cleaning Products</option>
-              <option value="pest">Pest Control</option>
-              <option value="home">Home & Kitchen</option>
-              <option value="personal">Personal Care</option>
-              <option value="baby">Baby Care</option>
-              <option value="drinks">Drinks & Beverages</option>
-              <option value="food">Food Items</option>
-              <option value="stationery">Stationery & Office</option>
-              <option value="auto">Auto Care</option>
-              <option value="fashion">Fashion & Accessories</option>
-              <option value="electronics">Electronics</option>
-              <option value="books">Books & Education</option>
-            </select>
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Retail Price (UGX)</label>
+              <input id="pRetail" type="number" placeholder="16000">
+            </div>
+            <div>
+              <label>Wholesale Price (UGX)</label>
+              <input id="pWholesale" type="number" placeholder="14000">
+            </div>
           </div>
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Unit</label>
+              <input id="pUnit" placeholder="bottle / bag / pack">
+            </div>
+            <div>
+              <label>MOQ (wholesale)</label>
+              <input id="pMoq" type="number" placeholder="12" value="1">
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label>Description</label>
+            <textarea id="pDesc" rows="3" placeholder="Short description..."></textarea>
+          </div>
+          <div style="margin-top:12px">
+            <label>Images (up to 4)</label>
+            <div class="bar" style="margin:6px 0">
+              <input id="fileInput" type="file" accept="image/*" multiple>
+              <button class="button" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+              <span class="muted small">Files will be uploaded to your repo's <code>/images/</code> folder.</span>
+            </div>
+            <div id="imgGrid" class="images"></div>
+          </div>
+          <div class="bar" style="margin-top:14px">
+            <button id="publishBtn" class="button primary">Publish to GitHub</button>
+            <button id="resetBtn" class="button">Reset Form</button>
+          </div>
+          <div id="status" class="muted small" style="margin-top:8px"></div>
         </div>
-        <div class="row" style="margin-top:8px">
-          <div>
-            <label>Retail Price (UGX)</label>
-            <input id="pRetail" type="number" placeholder="16000">
+      </div>
+
+      <!-- Right: Manage + preview + log -->
+      <div class="card">
+        <div class="body">
+          <h3 style="margin:0 0 10px">Manage Products (GitHub)</h3>
+          <div class="bar" style="margin-bottom:8px">
+            <button id="refreshBtn" class="button">Refresh List</button>
+            <label class="small" title="If checked, deleting a product will also remove its images from /images/">
+              <input type="checkbox" id="delImagesToggle"> also delete images
+            </label>
           </div>
-          <div>
-            <label>Wholesale Price (UGX)</label>
-            <input id="pWholesale" type="number" placeholder="14000">
-          </div>
+          <div id="prodList" class="list"></div>
+
+          <h3 style="margin:16px 0 10px">Last Published Product (local preview)</h3>
+          <div id="preview" class="list"></div>
+
+          <h4 style="margin:14px 0 6px">Debug Log</h4>
+          <div id="log" class="code"></div>
         </div>
-        <div class="row" style="margin-top:8px">
-          <div>
-            <label>Unit</label>
-            <input id="pUnit" placeholder="bottle / bag / pack">
-          </div>
-          <div>
-            <label>MOQ (wholesale)</label>
-            <input id="pMoq" type="number" placeholder="12" value="1">
-          </div>
-        </div>
-        <div style="margin-top:8px">
-          <label>Description</label>
-          <textarea id="pDesc" rows="3" placeholder="Short description..."></textarea>
-        </div>
-        <div style="margin-top:12px">
-          <label>Images (up to 4)</label>
-          <div class="bar" style="margin:6px 0">
-            <input id="fileInput" type="file" accept="image/*" multiple>
-            <button class="button" onclick="document.getElementById('fileInput').click()">Choose Files</button>
-            <span class="muted small">Files will be uploaded to your repo's <code>/images/</code> folder.</span>
-          </div>
-          <div id="imgGrid" class="images"></div>
-        </div>
-        <div class="bar" style="margin-top:14px">
-          <button id="publishBtn" class="button primary">Publish to GitHub</button>
-          <button id="resetBtn" class="button">Reset Form</button>
-        </div>
-        <div id="status" class="muted small" style="margin-top:8px"></div>
       </div>
     </div>
-
-    <!-- Right: Manage + preview + log -->
-    <div class="card">
-      <div class="body">
-        <h3 style="margin:0 0 10px">Manage Products (GitHub)</h3>
-        <div class="bar" style="margin-bottom:8px">
-          <button id="refreshBtn" class="button">Refresh List</button>
-          <label class="small" title="If checked, deleting a product will also remove its images from /images/">
-            <input type="checkbox" id="delImagesToggle"> also delete images
-          </label>
+  </div>
+  
+  <div id="heroTab" class="tab-content" style="display:none;">
+    <div class="grid">
+      <div class="card">
+        <div class="body">
+          <h2 style="margin:0 0 10px">Update Hero Section</h2>
+          <div style="margin-top:8px">
+            <label>Hero Title</label>
+            <input id="heroTitle" placeholder="Orji Supplies - Your One-Stop Shop" value="Orji Supplies - Your One-Stop Shop">
+          </div>
+          <div style="margin-top:8px">
+            <label>Hero Subtitle</label>
+            <input id="heroSubtitle" placeholder="Quality Products at Wholesale Prices" value="Quality Products at Wholesale Prices">
+          </div>
+          <div style="margin-top:8px">
+            <label>Description</label>
+            <textarea id="heroDesc" rows="3" placeholder="Store description...">We supply everything from household essentials to electronics, books, and more. Serving both retail and wholesale customers across Uganda.</textarea>
+          </div>
+          <div style="margin-top:8px">
+            <label>Background Image</label>
+            <input id="heroBgInput" type="file" accept="image/*" style="margin-bottom:8px">
+            <input id="heroBgUrl" placeholder="https://raw.githubusercontent.com/.../hero-background.jpg" value="https://raw.githubusercontent.com/hunter9201/Orji-Supplies/main/images/hero-background.jpg">
+            <div class="bar" style="margin-top:6px">
+              <button class="button small" onclick="document.getElementById('heroBgInput').click()">Upload New</button>
+              <span class="muted small">Or paste URL above</span>
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Phone Number</label>
+              <input id="heroPhone" placeholder="+256 700 123 456" value="+256 700 123 456">
+            </div>
+            <div>
+              <label>Email</label>
+              <input id="heroEmail" placeholder="info@orjisupplies.com" value="info@orjisupplies.com">
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label>Address</label>
+            <input id="heroAddress" placeholder="Kampala Road, Kampala, Uganda" value="Kampala Road, Kampala, Uganda">
+          </div>
+          <div style="margin-top:8px">
+            <label>Business Hours</label>
+            <input id="heroHours" placeholder="Mon-Sat: 8:00 AM - 8:00 PM, Sun: 10:00 AM - 6:00 PM" value="Mon-Sat: 8:00 AM - 8:00 PM, Sun: 10:00 AM - 6:00 PM">
+          </div>
+          <div class="bar" style="margin-top:14px">
+            <button id="updateHeroBtn" class="button primary">Update Hero Section</button>
+            <button id="loadHeroBtn" class="button">Load Current</button>
+          </div>
+          <div id="heroStatus" class="muted small" style="margin-top:8px"></div>
         </div>
-        <div id="prodList" class="list"></div>
-
-        <h3 style="margin:16px 0 10px">Last Published Product (local preview)</h3>
-        <div id="preview" class="list"></div>
-
-        <h4 style="margin:14px 0 6px">Debug Log</h4>
-        <div id="log" class="code"></div>
+      </div>
+      
+      <div class="card">
+        <div class="body">
+          <h3 style="margin:0 0 10px">Current Hero Data</h3>
+          <div id="heroPreview" class="code" style="min-height:200px;max-height:400px;overflow-y:auto;">
+            Loading hero data...
+          </div>
+          <div class="bar" style="margin-top:14px">
+            <button id="updateIndexBtn" class="button ok">Update index.html</button>
+            <span class="muted small">This updates the main website</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -259,7 +338,9 @@ const GH_OWNER = "hunter9201";
 const GH_REPO = "Orji-Supplies";
 const GH_BRANCH = "main";
 const GH_IMAGES_DIR = "images";          // folder in repo
-const GH_PRODUCTS_PATH = "products.json"; // file in repo root (or "data/products.json")
+const GH_PRODUCTS_PATH = "products.json"; // file in repo root
+const GH_HERO_PATH = "hero.json";         // hero data file
+const GH_INDEX_PATH = "index.html";       // main website file
 /* ======================================================= */
 
 // Token storage key
@@ -276,6 +357,26 @@ const resetBtn = document.getElementById('resetBtn');
 const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const previewEl = document.getElementById('preview');
+
+// Hero section refs
+const heroTitle = document.getElementById('heroTitle');
+const heroSubtitle = document.getElementById('heroSubtitle');
+const heroDesc = document.getElementById('heroDesc');
+const heroBgInput = document.getElementById('heroBgInput');
+const heroBgUrl = document.getElementById('heroBgUrl');
+const heroPhone = document.getElementById('heroPhone');
+const heroEmail = document.getElementById('heroEmail');
+const heroAddress = document.getElementById('heroAddress');
+const heroHours = document.getElementById('heroHours');
+const updateHeroBtn = document.getElementById('updateHeroBtn');
+const loadHeroBtn = document.getElementById('loadHeroBtn');
+const heroStatus = document.getElementById('heroStatus');
+const heroPreview = document.getElementById('heroPreview');
+const updateIndexBtn = document.getElementById('updateIndexBtn');
+
+// Tab refs
+const tabs = document.querySelectorAll('.tab');
+const tabContents = document.querySelectorAll('.tab-content');
 
 // Token modal refs
 const tokenModal = document.getElementById('tokenModal');
@@ -297,9 +398,11 @@ const pMoq = document.getElementById('pMoq');
 const pDesc = document.getElementById('pDesc');
 
 let files = []; // selected images
+let heroBgFile = null; // hero background image file
 
 function log(msg){ logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; }
 function setStatus(msg){ statusEl.textContent = msg; }
+function setHeroStatus(msg){ heroStatus.textContent = msg; }
 function token(){ return localStorage.getItem(TOKEN_KEY) || ""; }
 function tokenOk(){ 
   const t = token(); 
@@ -307,6 +410,26 @@ function tokenOk(){
   tokenState.style.background = t ? "#dcfce7" : "#0ea5e90f"; 
   tokenState.style.borderColor = t ? "#86efac" : "#bae6fd";
 }
+
+// Tab switching
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    
+    // Update tabs
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    // Show corresponding content
+    tabContents.forEach(content => {
+      content.classList.remove('active');
+      content.style.display = 'none';
+    });
+    
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    document.getElementById(tabName + 'Tab').style.display = 'block';
+  });
+});
 
 // Token modal functions
 function showTokenModal() {
@@ -349,11 +472,20 @@ tokenModal.addEventListener('click', (e) => {
   }
 });
 
-// file selection
+// Hero background image upload
+heroBgInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    heroBgFile = e.target.files[0];
+    setHeroStatus("Background image selected. Click 'Update Hero Section' to upload.");
+  }
+});
+
+// file selection for products
 fileInput.addEventListener('change', (e)=>{
   files = Array.from(e.target.files||[]).slice(0,4);
   renderFiles();
 });
+
 function renderFiles(){
   imgGrid.innerHTML = files.map((f,i)=>`
     <div class="preview">
@@ -362,6 +494,7 @@ function renderFiles(){
     </div>
   `).join('') || '<span class="muted small">No files selected.</span>';
 }
+
 window.removeFile = (i)=>{ files.splice(i,1); renderFiles(); };
 
 // GitHub helpers
@@ -389,7 +522,6 @@ async function ghPutContents(path, base64Content, message, sha=null){
   return await r.json();
 }
 
-// NEW: delete a file at path (needs current file SHA)
 async function ghDeleteContents(path, message, sha){
   const url = `${API_BASE}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(path)}`;
   const r = await fetch(url, {
@@ -404,6 +536,7 @@ async function ghDeleteContents(path, message, sha){
 function toBase64Utf8(str){
   return btoa(unescape(encodeURIComponent(str)));
 }
+
 function fileToBase64(file){
   return new Promise((res,rej)=>{
     const fr = new FileReader();
@@ -420,12 +553,12 @@ function fileToBase64(file){
 
 function slugify(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50) || "item"; }
 
-// ===== PUBLISH flow (unchanged) =====
+// ===== PUBLISH PRODUCT flow =====
 publishBtn.onclick = async ()=>{
   try{
     if (!token()){ 
       alert("Set your GitHub token first."); 
-      showTokenModal(); // Show modal if no token
+      showTokenModal();
       return; 
     }
     const name = pName.value.trim();
@@ -506,7 +639,154 @@ resetBtn.onclick = ()=>{
   files = []; renderFiles(); setStatus("");
 };
 
-// ===== MANAGE (Delete) =====
+// ===== HERO SECTION flow =====
+async function loadHeroData() {
+  try {
+    setHeroStatus("Loading hero data...");
+    const got = await ghGetContents(GH_HERO_PATH);
+    if (got.status === 404) {
+      heroPreview.textContent = "hero.json not found. Using default values.";
+      return null;
+    }
+    
+    const sha = got.sha;
+    const content = atob(got.content.replace(/\n/g,''));
+    const text = decodeURIComponent(escape(content));
+    const heroData = JSON.parse(text);
+    
+    // Update form fields
+    heroTitle.value = heroData.hero?.title || "";
+    heroSubtitle.value = heroData.hero?.subtitle || "";
+    heroDesc.value = heroData.hero?.description || "";
+    heroBgUrl.value = heroData.hero?.backgroundImage || "";
+    heroPhone.value = heroData.contactInfo?.phone || "";
+    heroEmail.value = heroData.contactInfo?.email || "";
+    heroAddress.value = heroData.contactInfo?.address || "";
+    heroHours.value = heroData.contactInfo?.businessHours || "";
+    
+    // Show preview
+    heroPreview.textContent = JSON.stringify(heroData, null, 2);
+    setHeroStatus("Hero data loaded successfully.");
+    return { data: heroData, sha };
+  } catch(err) {
+    heroPreview.textContent = "Error loading hero.json: " + err.message;
+    setHeroStatus("Error loading hero data.");
+    return null;
+  }
+}
+
+async function updateHeroData() {
+  try {
+    if (!token()){ 
+      alert("Set your GitHub token first."); 
+      showTokenModal();
+      return; 
+    }
+    
+    setHeroStatus("Updating hero section...");
+    
+    // Upload background image if new one is selected
+    let bgUrl = heroBgUrl.value;
+    if (heroBgFile) {
+      const ts = Date.now();
+      const ext = (heroBgFile.name.split('.').pop()||'jpg').toLowerCase();
+      const fname = `hero-bg-${ts}.${ext}`;
+      const path = `${GH_IMAGES_DIR}/${fname}`;
+      const b64 = await fileToBase64(heroBgFile);
+      await ghPutContents(path, b64, `Upload hero background image`);
+      bgUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(GH_IMAGES_DIR)}/${encodeURIComponent(fname)}`;
+      heroBgUrl.value = bgUrl;
+      heroBgFile = null;
+      log(`Uploaded hero background: ${path}`);
+    }
+    
+    // Load existing hero data or create new
+    let heroData = {};
+    let sha = null;
+    const got = await ghGetContents(GH_HERO_PATH);
+    if (got.status !== 404){
+      sha = got.sha;
+      const content = atob(got.content.replace(/\n/g,''));
+      const text = decodeURIComponent(escape(content));
+      heroData = JSON.parse(text);
+    }
+    
+    // Update hero data structure
+    heroData.hero = heroData.hero || {};
+    heroData.hero.title = heroTitle.value;
+    heroData.hero.subtitle = heroSubtitle.value;
+    heroData.hero.description = heroDesc.value;
+    heroData.hero.backgroundImage = bgUrl;
+    
+    heroData.contactInfo = heroData.contactInfo || {};
+    heroData.contactInfo.phone = heroPhone.value;
+    heroData.contactInfo.email = heroEmail.value;
+    heroData.contactInfo.address = heroAddress.value;
+    heroData.contactInfo.businessHours = heroHours.value;
+    
+    // Update JSON file
+    const jsonStr = JSON.stringify(heroData, null, 2);
+    const b64 = toBase64Utf8(jsonStr);
+    await ghPutContents(GH_HERO_PATH, b64, `Update hero section`, sha||undefined);
+    
+    heroPreview.textContent = JSON.stringify(heroData, null, 2);
+    setHeroStatus("Hero section updated successfully!");
+    alert("Hero section updated! Refresh your store to see changes.");
+    
+  } catch(err) {
+    console.error(err);
+    setHeroStatus("Error: " + err.message);
+    alert("Update failed:\n" + err.message);
+  }
+}
+
+async function updateIndexHtml() {
+  try {
+    if (!token()){ 
+      alert("Set your GitHub token first."); 
+      showTokenModal();
+      return; 
+    }
+    
+    if (!confirm("This will update the main index.html file. Continue?")) return;
+    
+    setHeroStatus("Updating index.html...");
+    
+    // Get current index.html
+    const got = await ghGetContents(GH_INDEX_PATH);
+    if (got.status === 404) {
+      throw new Error("index.html not found in repository");
+    }
+    
+    const sha = got.sha;
+    const content = atob(got.content.replace(/\n/g,''));
+    const text = decodeURIComponent(escape(content));
+    
+    // Update index.html with current timestamp in a comment
+    const updatedText = text.replace(
+      /<!-- Last updated: .*? -->/,
+      `<!-- Last updated: ${new Date().toLocaleString()} -->`
+    );
+    
+    const b64 = toBase64Utf8(updatedText);
+    await ghPutContents(GH_INDEX_PATH, b64, `Update index.html`, sha);
+    
+    setHeroStatus("index.html updated successfully!");
+    alert("Website updated! Refresh your store to see changes.");
+    
+  } catch(err) {
+    console.error(err);
+    setHeroStatus("Error: " + err.message);
+    alert("Update failed:\n" + err.message);
+  }
+}
+
+// Wire up hero section buttons
+updateHeroBtn.addEventListener('click', updateHeroData);
+loadHeroBtn.addEventListener('click', loadHeroData);
+updateIndexBtn.addEventListener('click', updateIndexHtml);
+
+// ===== PRODUCT MANAGEMENT =====
 function filenameFromRawUrl(u){
   try{
     const url = new URL(u);
@@ -617,6 +897,7 @@ prodList.addEventListener('click', async (e)=>{
 tokenOk();
 renderFiles();
 refreshProductsList(); // load list on open
+loadHeroData(); // load hero data on open
 
 // Add keyboard shortcut for token modal (Ctrl/Cmd + T)
 document.addEventListener('keydown', (e) => {
