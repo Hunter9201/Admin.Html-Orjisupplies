@@ -470,19 +470,18 @@
         <div class="form-group">
           <label for="productCategory">Category</label>
           <select id="productCategory" class="form-control">
-            <option value="laundry">Laundry & Detergents</option>
-            <option value="cleaning">Cleaning Products</option>
-            <option value="pest">Pest Control</option>
-            <option value="home">Home & Kitchen</option>
-            <option value="personal">Personal Care</option>
-            <option value="baby">Baby Care</option>
-            <option value="drinks">Drinks & Beverages</option>
-            <option value="food">Food Items</option>
-            <option value="stationery">Stationery & Office</option>
-            <option value="auto">Auto Care</option>
-            <option value="fashion">Fashion & Accessories</option>
+            <option value="groceries">Groceries & Food</option>
             <option value="electronics">Electronics</option>
-            <option value="books">Books & Education</option>
+            <option value="home">Home & Kitchen</option>
+            <option value="fashion">Clothing & Fashion</option>
+            <option value="construction">Building Materials</option>
+            <option value="office">Office Supplies</option>
+            <option value="beauty">Health & Beauty</option>
+            <option value="baby">Baby & Kids</option>
+            <option value="sports">Sports & Fitness</option>
+            <option value="automotive">Automotive</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="industrial">Industrial</option>
           </select>
         </div>
         
@@ -508,6 +507,10 @@
         <div class="form-group">
           <label for="moq">MOQ (Minimum Order)</label>
           <input type="number" id="moq" class="form-control" value="1">
+        </div>
+        <div class="form-group">
+          <label for="stock">Stock Quantity</label>
+          <input type="number" id="stock" class="form-control" value="50">
         </div>
       </div>
       
@@ -623,7 +626,7 @@
 
 <script>
 // ============================================
-// CONFIGURATION - EDIT THESE VALUES
+// CONFIGURATION
 // ============================================
 const CONFIG = {
   GITHUB_OWNER: "hunter9201",
@@ -660,6 +663,7 @@ const elements = {
   retailPrice: document.getElementById('retailPrice'),
   wholesalePrice: document.getElementById('wholesalePrice'),
   moq: document.getElementById('moq'),
+  stock: document.getElementById('stock'),
   productDescription: document.getElementById('productDescription'),
   imageInput: document.getElementById('imageInput'),
   imagePreview: document.getElementById('imagePreview'),
@@ -1015,10 +1019,10 @@ function renderProductsList() {
     item.innerHTML = `
       <h4>${product.name}</h4>
       <p>Category: ${product.category} | Price: UGX ${product.retailPrice.toLocaleString()}</p>
-      <p>${product.desc || 'No description'}</p>
+      <p>${product.description || 'No description'}</p>
       <div class="product-meta">
         <span style="font-size: 0.75rem; color: var(--muted);">
-          ${product.imgs ? product.imgs.length : 0} images
+          ${product.images ? product.images.length : 0} images
         </span>
         <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
       </div>
@@ -1099,15 +1103,23 @@ async function publishProduct() {
     
     // 3. Create new product object
     const newProduct = {
-      id: `product-${Date.now()}`,
+      id: `product-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: name,
+      name_ti: '', // Leave empty for Tigrinya
       category: elements.productCategory.value,
+      subcategory: elements.productCategory.value,
       retailPrice: parseInt(retailPrice) || 0,
       wholesalePrice: parseInt(elements.wholesalePrice.value) || Math.floor(parseInt(retailPrice) * 0.8),
-      unit: elements.productUnit.value || 'piece',
       moq: parseInt(elements.moq.value) || 1,
-      desc: elements.productDescription.value.trim(),
-      imgs: imageUrls
+      unit: elements.productUnit.value || 'piece',
+      stock: parseInt(elements.stock.value) || 50,
+      popular: false,
+      sale: false,
+      new: true,
+      rating: 4.0,
+      images: imageUrls,
+      description: elements.productDescription.value.trim(),
+      description_ti: ''
     };
     
     // 4. Add to products array
@@ -1134,7 +1146,7 @@ async function publishProduct() {
       hideModal(elements.progressModal);
       
       // Show success message
-      alert(`✅ Product "${name}" has been published to GitHub!\n\nYou can view it at:\nhttps://github.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/blob/${CONFIG.GITHUB_BRANCH}/${CONFIG.PRODUCTS_FILE}`);
+      alert(`✅ Product "${name}" has been published to GitHub!\n\nYou can view it at:\nhttps://github.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/blob/${CONFIG.GITHUB_BRANCH}/${CONFIG.PRODUCTS_FILE}\n\nImages are available at:\nhttps://github.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/tree/${CONFIG.GITHUB_BRANCH}/images`);
       
       // Reset form
       resetForm();
@@ -1173,8 +1185,8 @@ async function deleteProduct(index) {
   
   try {
     // Delete images if requested
-    if (deleteImages && product.imgs && product.imgs.length > 0) {
-      for (const imageUrl of product.imgs) {
+    if (deleteImages && product.images && product.images.length > 0) {
+      for (const imageUrl of product.images) {
         try {
           // Extract filename from URL
           const urlParts = imageUrl.split('/');
@@ -1224,6 +1236,7 @@ function resetForm() {
   elements.wholesalePrice.value = '';
   elements.productUnit.value = 'piece';
   elements.moq.value = '1';
+  elements.stock.value = '50';
   elements.productDescription.value = '';
   elements.productCategory.selectedIndex = 0;
   
