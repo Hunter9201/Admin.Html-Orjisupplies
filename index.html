@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Orji Supplies — Admin Panel</title>
+<title>Orji Supplies — Admin Panel (Editable Categories)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- CSP that allows GitHub API + raw image previews (works on GitHub Pages) -->
@@ -123,6 +123,16 @@
     font-size: 12px;
     color: #0369a1;
   }
+
+  /* Category input with datalist */
+  .category-wrapper {
+    position: relative;
+  }
+  .category-hint {
+    font-size: 11px;
+    margin-top: 4px;
+    color: var(--muted);
+  }
   
   @media (max-width:900px){ .grid{grid-template-columns:1fr} }
 </style>
@@ -130,7 +140,7 @@
 <body>
 <header>
   <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-    <strong>Orji Supplies — Admin Panel</strong>
+    <strong>Orji Supplies — Admin Panel (Editable Categories)</strong>
     <div class="bar">
       <button id="setTokenBtn" class="button">Set GitHub Token</button>
       <button id="setSessionBtn" class="button">Use Session</button>
@@ -197,16 +207,11 @@
             <label>Product Name</label>
             <input id="pName" placeholder="e.g., Office Chair">
           </div>
-          <div>
-            <label>Category</label>
-            <select id="pCat">
-              <option value="office-supplies">Office Supplies</option>
-              <option value="cleaning">Cleaning Products</option>
-              <option value="stationery">Stationery</option>
-              <option value="furniture">Furniture</option>
-              <option value="electronics">Electronics</option>
-              <option value="other">Other</option>
-            </select>
+          <div class="category-wrapper">
+            <label>Category (editable)</label>
+            <input list="categoryOptions" id="pCat" placeholder="e.g., furniture, electronics, cleaning..." autocomplete="off">
+            <datalist id="categoryOptions"></datalist>
+            <div class="category-hint">✨ Type any new category name (e.g., "Tools") or select existing</div>
           </div>
         </div>
         <div class="row" style="margin-top:8px">
@@ -254,6 +259,7 @@
           <button id="publishBtn" class="button primary" type="button">Publish to GitHub</button>
           <button id="updateBtn" class="button ok" type="button" style="display:none">Update Product</button>
           <button id="resetBtn" class="button" type="button">Reset Form</button>
+          <button id="refreshCategoriesBtn" class="button" type="button" style="font-size:12px; padding:6px 10px;">⟳ Refresh category list</button>
         </div>
         <div id="status" class="muted small" style="margin-top:8px"></div>
       </div>
@@ -288,6 +294,7 @@
 <script>
 /* ===========================
    Orji Supplies Admin Panel
+   Editable categories (datalist + free text)
    =========================== */
 
 /* --- STORAGE KEYS --- */
@@ -305,7 +312,7 @@ const defaultCfg = {
   maxImagePx: 1600
 };
 
-/* --- WEBSITE DEPLOYMENT SETTINGS --- */
+/* --- WEBSITE DEPLOYMENT SETTINGS (optional) --- */
 const DEPLOY_WEBHOOK = "";
 const TARGET_SITE = "http://orjisupplies.store/";
 
@@ -315,7 +322,6 @@ const setTokenBtn = document.getElementById('setTokenBtn');
 const setSessionBtn = document.getElementById('setSessionBtn');
 const clearTokenBtn = document.getElementById('clearTokenBtn');
 
-// Token modal elements
 const tokenModal = document.getElementById('tokenModal');
 const tokenInput = document.getElementById('tokenInput');
 const closeTokenModal = document.getElementById('closeTokenModal');
@@ -359,6 +365,8 @@ const pWholesale = document.getElementById('pWholesale');
 const pUnit = document.getElementById('pUnit');
 const pMoq = document.getElementById('pMoq');
 const pDesc = document.getElementById('pDesc');
+const categoryOptionsDatalist = document.getElementById('categoryOptions');
+const refreshCategoriesBtn = document.getElementById('refreshCategoriesBtn');
 
 /* --- STATE --- */
 let files = [];       // newly selected images
@@ -415,71 +423,28 @@ function ghHeaders(){
 }
 
 /* --- TOKEN MODAL FUNCTIONS --- */
-function showTokenModal() {
-  tokenModal.style.display = 'flex';
-  // Clear the input field
-  tokenInput.value = '';
-  // Focus on the input field (with slight delay for iOS)
-  setTimeout(() => {
-    tokenInput.focus();
-    // Scroll to top of modal for better mobile experience
-    tokenModal.scrollTop = 0;
-  }, 100);
-}
-
-function hideTokenModal() {
-  tokenModal.style.display = 'none';
-  // Clear the input field
-  tokenInput.value = '';
-}
-
+function showTokenModal() { tokenModal.style.display = 'flex'; tokenInput.value = ''; setTimeout(() => tokenInput.focus(), 100); }
+function hideTokenModal() { tokenModal.style.display = 'none'; tokenInput.value = ''; }
 async function saveTokenFromModal() {
   const token = tokenInput.value.trim();
-  if (!token) {
-    alert("Please enter a GitHub token.");
-    return;
-  }
-  
-  // Save token
+  if (!token) { alert("Please enter a GitHub token."); return; }
   setToken(token);
   hideTokenModal();
-  
-  // Test token
   setStatus("Testing token…");
   const ok = await verifyTokenAccess();
   setStatus(ok ? "Token OK" : "Token invalid for repo");
 }
 
-/* --- AUTOMATIC SITE DEPLOYMENT --- */
+/* --- AUTOMATIC SITE DEPLOYMENT (optional) --- */
 async function triggerSiteDeployment() {
-  if (!DEPLOY_WEBHOOK) {
-    log("No deployment webhook configured. Site update may require manual deployment.");
-    return false;
-  }
-  
+  if (!DEPLOY_WEBHOOK) { log("No deployment webhook configured."); return false; }
   try {
     setStatus("Triggering site deployment...");
     log("Triggering deployment to " + TARGET_SITE);
-    
-    const response = await fetch(DEPLOY_WEBHOOK, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-    
-    if (response.ok) {
-      log("✓ Deployment triggered successfully");
-      setStatus("Site deployment initiated!");
-      return true;
-    } else {
-      log("✗ Deployment trigger failed: " + response.status);
-      return false;
-    }
-  } catch (error) {
-    log("✗ Deployment error: " + error.message);
-    return false;
-  }
+    const response = await fetch(DEPLOY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    if (response.ok) { log("✓ Deployment triggered successfully"); setStatus("Site deployment initiated!"); return true; }
+    else { log("✗ Deployment trigger failed: " + response.status); return false; }
+  } catch (error) { log("✗ Deployment error: " + error.message); return false; }
 }
 
 /* GitHub API */
@@ -490,7 +455,6 @@ async function ghGetContents(path, cfg=currentCfg()){
   if (!r.ok) throw new Error(`GET ${path} failed: ${r.status} ${await r.text()}`);
   return await r.json();
 }
-
 async function ghPutContents(path, base64Content, message, sha=null, cfg=currentCfg()){
   const url = `${API_BASE}/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`;
   const body = { message, content: base64Content, branch: cfg.branch };
@@ -499,7 +463,6 @@ async function ghPutContents(path, base64Content, message, sha=null, cfg=current
   if (!r.ok) throw new Error(`PUT ${path} failed: ${r.status} ${await r.text()}`);
   return await r.json();
 }
-
 async function ghDeleteContents(path, message, sha, cfg=currentCfg()){
   const url = `${API_BASE}/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(path)}`;
   const r = await fetch(url, { method: "DELETE", headers: {...ghHeaders(), "Content-Type":"application/json"}, body: JSON.stringify({ message, sha, branch: cfg.branch }) });
@@ -515,10 +478,7 @@ async function verifyTokenAccess(){
     if (!r.ok) { tokenOk("Token invalid for repo"); return false; }
     tokenOk("Token OK");
     return true;
-  }catch{
-    tokenOk("Token check failed");
-    return false;
-  }
+  }catch{ tokenOk("Token check failed"); return false; }
 }
 
 /* Image helpers */
@@ -530,7 +490,6 @@ function fileToBase64(file){
     fr.readAsArrayBuffer(file);
   });
 }
-
 async function compressImage(file, maxPx){
   return new Promise((resolve, reject)=>{
     const url = URL.createObjectURL(file);
@@ -553,7 +512,7 @@ async function compressImage(file, maxPx){
   });
 }
 
-/* Products.json */
+/* Load products.json and also update category datalist */
 async function loadProductsJson(){
   const got = await ghGetContents(currentCfg().productsPath);
   if (got.status === 404) return { arr: [], sha: null };
@@ -564,6 +523,26 @@ async function loadProductsJson(){
   return { arr, sha };
 }
 
+/* Refresh the category datalist from existing products */
+async function refreshCategoryDatalist() {
+  try {
+    const { arr } = await loadProductsJson();
+    const uniqueCats = new Set();
+    arr.forEach(p => { if(p.category && typeof p.category === 'string') uniqueCats.add(p.category); });
+    // Add some sensible defaults if empty
+    if(uniqueCats.size === 0) {
+      ['furniture', 'electronics', 'cleaning', 'office-supplies', 'stationery', 'other'].forEach(c => uniqueCats.add(c));
+    }
+    const sorted = Array.from(uniqueCats).sort();
+    categoryOptionsDatalist.innerHTML = sorted.map(cat => `<option value="${escapeHtml(cat)}">`).join('');
+    log(`Category list refreshed: ${sorted.length} distinct categories`);
+  } catch (err) {
+    log(`Failed to refresh categories: ${err.message}`);
+  }
+}
+
+function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;' })[m]); }
+
 function renderProductsAdmin(arr){
   if (!Array.isArray(arr) || !arr.length){
     prodList.innerHTML = '<div class="muted small">No products found in products.json.</div>';
@@ -573,7 +552,6 @@ function renderProductsAdmin(arr){
   arr.forEach(p=>{
     const item = document.createElement('div'); item.className='item'; item.dataset.id=p.id;
     const top = document.createElement('div'); top.className='bar'; top.style.justifyContent='space-between'; top.style.alignItems='flex-start';
-
     const left = document.createElement('div');
     const name = document.createElement('div');
     const strong = document.createElement('strong'); strong.textContent = p.name;
@@ -582,73 +560,43 @@ function renderProductsAdmin(arr){
     const meta = document.createElement('div'); meta.className='muted small'; meta.textContent = `Category: ${p.category||'-'} • Retail: UGX ${(p.retailPrice||0).toLocaleString('en-UG')} • Images: ${(p.imgs||[]).length}`;
     const desc = document.createElement('div'); desc.className='muted small'; desc.textContent = (p.desc||'').slice(0,140);
     left.appendChild(name); left.appendChild(meta); left.appendChild(desc);
-
     const right = document.createElement('div'); right.className='bar';
     const editBtn = document.createElement('button'); editBtn.className='button ok'; editBtn.textContent='Edit'; editBtn.onclick=()=>startEdit(p);
     const delBtn = document.createElement('button'); delBtn.className='button bad'; delBtn.textContent='Delete'; delBtn.onclick=()=>deleteProduct(p.id, !!delImagesToggle.checked);
     right.appendChild(editBtn); right.appendChild(delBtn);
-
     top.appendChild(left); top.appendChild(right);
     item.appendChild(top);
     prodList.appendChild(item);
   });
 }
 
-/* Select files */
+/* File handling */
 fileInput.addEventListener('change', (e)=>{ files = Array.from(e.target.files||[]).slice(0,4); renderFiles(); });
 
 function renderFiles(){
   imgGrid.replaceChildren();
-  if (!files.length){ 
-    imgGrid.innerHTML = '<span class="muted small">No files selected.</span>'; 
-    return; 
-  }
-  
+  if (!files.length){ imgGrid.innerHTML = '<span class="muted small">No files selected.</span>'; return; }
   files.forEach((f,i)=>{
     const wrap = document.createElement('div'); wrap.className='preview';
-    
-    // Create loading placeholder
-    const loadingDiv = document.createElement('div'); 
-    loadingDiv.className='loading';
-    loadingDiv.textContent = 'Loading...';
+    const loadingDiv = document.createElement('div'); loadingDiv.className='loading'; loadingDiv.textContent = 'Loading...';
     wrap.appendChild(loadingDiv);
-    
-    const img = document.createElement('img'); 
-    img.alt = f.name; // Set proper alt text to prevent "Product Image" display
-    img.style.display = 'none'; // Hide until loaded
-    
-    // When image loads, show it and remove loading placeholder
-    img.onload = () => {
-      loadingDiv.remove();
-      img.style.display = 'block';
-    };
-    
-    img.onerror = () => {
-      loadingDiv.textContent = 'Error loading image';
-      loadingDiv.style.color = 'var(--bad)';
-    };
-    
+    const img = document.createElement('img'); img.alt = f.name; img.style.display = 'none';
+    img.onload = () => { loadingDiv.remove(); img.style.display = 'block'; };
+    img.onerror = () => { loadingDiv.textContent = 'Error loading image'; loadingDiv.style.color = 'var(--bad)'; };
     img.src = URL.createObjectURL(f);
-    
-    const rm = document.createElement('button'); 
-    rm.className='button bad rm small'; 
-    rm.textContent='x'; 
-    rm.onclick=()=>{ 
-      files.splice(i,1); 
-      renderFiles(); 
-    };
-    
-    wrap.appendChild(img); 
-    wrap.appendChild(rm); 
-    imgGrid.appendChild(wrap);
+    const rm = document.createElement('button'); rm.className='button bad rm small'; rm.textContent='x'; rm.onclick=()=>{ files.splice(i,1); renderFiles(); };
+    wrap.appendChild(img); wrap.appendChild(rm); imgGrid.appendChild(wrap);
   });
 }
 
-/* Editing */
+/* Start editing a product: populate form with existing category (free text) */
 function startEdit(p){
   editingId = p.id; formTitle.textContent='Edit Product'; editBadge.style.display='inline-block';
   publishBtn.style.display='none'; updateBtn.style.display='inline-block';
-  pName.value=p.name||''; pCat.value=p.category||'office-supplies'; pRetail.value=p.retailPrice||''; pWholesale.value=p.wholesalePrice||''; pUnit.value=p.unit||'piece'; pMoq.value=p.moq||1; pDesc.value=p.desc||'';
+  pName.value=p.name||''; 
+  pCat.value = p.category || '';   // editable category field gets any string
+  pRetail.value=p.retailPrice||''; pWholesale.value=p.wholesalePrice||''; 
+  pUnit.value=p.unit||'piece'; pMoq.value=p.moq||1; pDesc.value=p.desc||'';
   files = []; renderFiles();
 
   const showExisting = Array.isArray(p.imgs) && p.imgs.length;
@@ -658,66 +606,36 @@ function startEdit(p){
   if (showExisting) {
     p.imgs.forEach((u,idx)=>{
       const cell = document.createElement('div'); cell.className='preview';
-      
-      // Create loading placeholder
-      const loadingDiv = document.createElement('div'); 
-      loadingDiv.className='loading';
-      loadingDiv.textContent = 'Loading...';
+      const loadingDiv = document.createElement('div'); loadingDiv.className='loading'; loadingDiv.textContent = 'Loading...';
       cell.appendChild(loadingDiv);
-      
-      const img = document.createElement('img'); 
-      img.alt = `Product image ${idx + 1}`; // Set proper alt text
-      img.style.display = 'none'; // Hide until loaded
-      
-      img.onload = () => {
-        loadingDiv.remove();
-        img.style.display = 'block';
-      };
-      
-      img.onerror = () => {
-        loadingDiv.textContent = 'Error loading image';
-        loadingDiv.style.color = 'var(--bad)';
-      };
-      
-      img.src = u;
-      img.dataset.url = u;
-      img.dataset.idx = String(idx);
-      
-      const rm = document.createElement('button'); 
-      rm.className='button bad rm small'; 
-      rm.textContent='rm'; 
-      rm.onclick=()=>{ 
-        cell.remove(); 
-        img.dataset.removed='1'; 
-      };
-      
-      cell.appendChild(img); 
-      cell.appendChild(rm); 
-      existingImgsEl.appendChild(cell);
+      const img = document.createElement('img'); img.alt = `Product image ${idx+1}`; img.style.display = 'none';
+      img.onload = () => { loadingDiv.remove(); img.style.display = 'block'; };
+      img.onerror = () => { loadingDiv.textContent = 'Error loading image'; loadingDiv.style.color = 'var(--bad)'; };
+      img.src = u; img.dataset.url = u; img.dataset.idx = String(idx);
+      const rm = document.createElement('button'); rm.className='button bad rm small'; rm.textContent='rm'; 
+      rm.onclick=()=>{ cell.remove(); img.dataset.removed='1'; };
+      cell.appendChild(img); cell.appendChild(rm); existingImgsEl.appendChild(cell);
     });
   }
-  
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function resetForm(){
   editingId=null; formTitle.textContent='New Product'; editBadge.style.display='none';
   publishBtn.style.display='inline-block'; updateBtn.style.display='none';
-  pName.value=""; pRetail.value=""; pWholesale.value=""; pUnit.value=""; pMoq.value="1"; pDesc.value=""; pCat.value='office-supplies';
+  pName.value=""; pRetail.value=""; pWholesale.value=""; pUnit.value=""; pMoq.value="1"; pDesc.value=""; pCat.value="";
   files=[]; renderFiles(); existingWrap.style.display='none'; existingImgsEl.replaceChildren(); setStatus('');
 }
-
 resetBtn.addEventListener('click', resetForm);
 
-/* Publish (Create) - UPDATED WITH AUTOMATIC DEPLOYMENT */
+/* Publish (Create) with editable category */
 publishBtn.addEventListener('click', async ()=>{
   try{
     if (!getToken()){ alert("Set your GitHub token first."); return; }
     const name = pName.value.trim(); if (!name){ alert("Enter product name."); return; }
     if (!pRetail.value){ alert("Enter retail price."); return; }
-
-    // verify token once
-    const ok = await verifyTokenAccess(); if (!ok){ alert("Token not authorized for this repo."); return; }
+    const category = pCat.value.trim() || "other";
+    if (!(await verifyTokenAccess())){ alert("Token not authorized for this repo."); return; }
 
     const cfg = currentCfg();
     setStatus("Uploading images…"); log("=== Starting product publication ===");
@@ -728,45 +646,34 @@ publishBtn.addEventListener('click', async ()=>{
     for (let i=0;i<Math.min(4, files.length);i++){
       const orig = files[i];
       const compressed = await compressImage(orig, cfg.maxImagePx).catch(()=>orig);
-      const ext = 'jpg';
-      const fname = `${baseSlug}-${i+1}.${ext}`;
+      const fname = `${baseSlug}-${i+1}.jpg`;
       const path = `${cfg.imagesDir}/${fname}`;
       const b64 = await fileToBase64(compressed);
       await ghPutContents(path, b64, `Upload image ${fname}`, null, cfg);
       const url = `${RAW_BASE}/${cfg.owner}/${cfg.repo}/${cfg.branch}/${encodeURIComponent(cfg.imagesDir)}/${encodeURIComponent(fname)}`;
       rawUrls.push(url); log(`Uploaded ${path}`);
     }
-    if (!rawUrls.length) log("No images selected; continuing.");
 
     setStatus("Updating products.json…");
-    let arr = []; let sha = null;
+    let arr = [], sha = null;
     const got = await ghGetContents(cfg.productsPath, cfg);
-    if (got.status !== 404){ sha = got.sha; try{ arr = JSON.parse(fromBase64Utf8(got.content)); if(!Array.isArray(arr)) arr=[]; }catch{ arr=[]; } log("Loaded existing products.json"); }
+    if (got.status !== 404){ sha = got.sha; try{ arr = JSON.parse(fromBase64Utf8(got.content)); if(!Array.isArray(arr)) arr=[]; }catch{ arr=[]; } }
 
-    const product = { id: baseSlug, name, category: pCat.value, retailPrice: Number(pRetail.value)||0, wholesalePrice: Number(pWholesale.value)||0, unit: pUnit.value.trim()||"piece", moq: Number(pMoq.value)||1, desc: pDesc.value.trim(), imgs: rawUrls };
+    const product = { id: baseSlug, name, category, retailPrice: Number(pRetail.value)||0, wholesalePrice: Number(pWholesale.value)||0, unit: pUnit.value.trim()||"piece", moq: Number(pMoq.value)||1, desc: pDesc.value.trim(), imgs: rawUrls };
     arr.push(product);
-
     await ghPutContents(cfg.productsPath, toBase64Utf8(JSON.stringify(arr,null,2)), `Add product ${product.id}`, sha||undefined, cfg);
-    log("✓ products.json updated on GitHub");
-
-    // TRIGGER SITE DEPLOYMENT
-    log("Triggering site deployment to " + TARGET_SITE);
-    const deploymentSuccess = await triggerSiteDeployment();
-    
-    setStatus("Done! Product published." + (deploymentSuccess ? " Site deployment initiated." : ""));
-    
-    previewEl.innerHTML = '';
-    const it = document.createElement('div'); it.className='item';
-    it.innerHTML = `<div><strong>${product.name}</strong> — UGX ${product.retailPrice.toLocaleString('en-UG')}</div><div class="muted small">${product.desc||''}</div><div class="muted small">Images: ${product.imgs.length}</div>`;
-    previewEl.appendChild(it);
-
-    alert("Published successfully!" + (deploymentSuccess ? "\nSite deployment has been triggered." : "\nNote: Site may require manual update."));
+    log("✓ products.json updated");
+    await triggerSiteDeployment();
+    setStatus("Done! Product published.");
+    previewEl.innerHTML = `<div class="item"><div><strong>${product.name}</strong> — UGX ${product.retailPrice.toLocaleString('en-UG')}</div><div class="muted small">${product.desc||''}</div><div class="muted small">Images: ${product.imgs.length}</div></div>`;
+    alert("Published successfully!");
     await refreshProductsList();
+    await refreshCategoryDatalist();
     resetForm();
   }catch(err){ console.error(err); log(String(err)); setStatus("Error: " + err.message); alert("Publish failed:\n" + err.message); }
 });
 
-/* Update (Edit) - UPDATED WITH AUTOMATIC DEPLOYMENT */
+/* Update product with editable category */
 updateBtn.addEventListener('click', async ()=>{
   try{
     if (!editingId){ alert('Nothing to update.'); return; }
@@ -774,6 +681,7 @@ updateBtn.addEventListener('click', async ()=>{
     if (!(await verifyTokenAccess())){ alert("Token not authorized for this repo."); return; }
     const name = pName.value.trim(); if (!name){ alert("Enter product name."); return; }
     if (!pRetail.value){ alert("Enter retail price."); return; }
+    const category = pCat.value.trim() || "other";
 
     const cfg = currentCfg();
     setStatus("Updating product…"); log(`=== Updating product: ${editingId} ===`);
@@ -783,18 +691,15 @@ updateBtn.addEventListener('click', async ()=>{
 
     const current = arr[idx];
     let imgs = (current.imgs||[]).slice();
-
-    // remove any existing images flagged for removal
+    // remove flagged existing images
     [...(existingImgsEl?.querySelectorAll('img')||[])].forEach(img => {
       if (img.dataset.removed === '1') imgs = imgs.filter(u => u !== img.dataset.url);
     });
-
-    // upload new images
+    // upload new ones
     for (let i=0;i<Math.min(4, files.length);i++){
       const orig = files[i];
       const compressed = await compressImage(orig, cfg.maxImagePx).catch(()=>orig);
-      const ext = 'jpg';
-      const fname = `${editingId}-${Date.now()}-${i+1}.${ext}`;
+      const fname = `${editingId}-${Date.now()}-${i+1}.jpg`;
       const path = `${cfg.imagesDir}/${fname}`;
       const b64 = await fileToBase64(compressed);
       await ghPutContents(path, b64, `Upload image ${fname}`, null, cfg);
@@ -803,29 +708,20 @@ updateBtn.addEventListener('click', async ()=>{
     }
     imgs = imgs.slice(0,4);
 
-    const updated = { ...current, name, category: pCat.value, retailPrice: Number(pRetail.value)||0, wholesalePrice: Number(pWholesale.value)||0, unit: pUnit.value.trim()||"piece", moq: Number(pMoq.value)||1, desc: pDesc.value.trim(), imgs };
+    const updated = { ...current, name, category, retailPrice: Number(pRetail.value)||0, wholesalePrice: Number(pWholesale.value)||0, unit: pUnit.value.trim()||"piece", moq: Number(pMoq.value)||1, desc: pDesc.value.trim(), imgs };
     arr[idx] = updated;
     await ghPutContents(cfg.productsPath, toBase64Utf8(JSON.stringify(arr,null,2)), `Update product ${editingId}`, sha||undefined, cfg);
-    log("✓ products.json updated on GitHub");
-
-    // TRIGGER SITE DEPLOYMENT
-    log("Triggering site deployment to " + TARGET_SITE);
-    const deploymentSuccess = await triggerSiteDeployment();
-    
-    setStatus('Updated.' + (deploymentSuccess ? " Site deployment initiated." : ""));
-    log('products.json updated.');
-    
-    previewEl.innerHTML = '';
-    const it = document.createElement('div'); it.className='item';
-    it.innerHTML = `<div><strong>${updated.name}</strong> — UGX ${updated.retailPrice.toLocaleString('en-UG')}</div><div class="muted small">${updated.desc||''}</div><div class="muted small">Images: ${updated.imgs.length}</div>`;
-    previewEl.appendChild(it);
-
+    log("✓ products.json updated");
+    await triggerSiteDeployment();
+    setStatus('Updated.');
+    previewEl.innerHTML = `<div class="item"><div><strong>${updated.name}</strong> — UGX ${updated.retailPrice.toLocaleString('en-UG')}</div><div class="muted small">${updated.desc||''}</div><div class="muted small">Images: ${updated.imgs.length}</div></div>`;
     await refreshProductsList();
+    await refreshCategoryDatalist();
     resetForm();
   }catch(err){ console.error(err); log(String(err)); setStatus("Error: " + err.message); alert("Update failed:\n" + err.message); }
 });
 
-/* Delete - UPDATED WITH AUTOMATIC DEPLOYMENT */
+/* Delete product - also triggers category refresh */
 async function deleteProduct(productId, alsoDeleteImages){
   try{
     if (!getToken()){ alert("Set your GitHub token first."); return; }
@@ -842,12 +738,12 @@ async function deleteProduct(productId, alsoDeleteImages){
     if (alsoDeleteImages && Array.isArray(product.imgs)){
       for (const u of product.imgs){
         const fname = (()=>{ try{ const url=new URL(u); return decodeURIComponent(url.pathname.split('/').pop()||""); }catch{ return ""; } })();
-        if (!fname){ log(`Skip image (no filename): ${u}`); continue; }
+        if (!fname) continue;
         const path = `${cfg.imagesDir}/${fname}`;
         try{
           const got = await ghGetContents(path, cfg);
-          if (got.status === 404){ log(`Image not found: ${path}`); continue; }
-          await ghDeleteContents(path, `Delete image ${fname} (product ${productId})`, got.sha, cfg);
+          if (got.status === 404) continue;
+          await ghDeleteContents(path, `Delete image ${fname}`, got.sha, cfg);
           log(`Deleted image: ${path}`);
         }catch(e){ log(`Failed to delete image ${path}: ${e.message}`); }
       }
@@ -856,29 +752,25 @@ async function deleteProduct(productId, alsoDeleteImages){
     const newArr = arr.filter(p => p.id !== productId);
     await ghPutContents(cfg.productsPath, toBase64Utf8(JSON.stringify(newArr,null,2)), `Delete product ${productId}`, sha||undefined, cfg);
     log(`✓ Removed ${productId} from products.json`);
-
-    // TRIGGER SITE DEPLOYMENT
-    log("Triggering site deployment to " + TARGET_SITE);
-    const deploymentSuccess = await triggerSiteDeployment();
-    
-    setStatus("Deleted." + (deploymentSuccess ? " Site deployment initiated." : ""));
+    await triggerSiteDeployment();
+    setStatus("Deleted.");
     await refreshProductsList();
+    await refreshCategoryDatalist();
   }catch(err){ console.error(err); log(String(err)); setStatus("Error: " + err.message); alert("Delete failed:\n" + err.message); }
 }
 
-/* List / Export / Import */
+/* Refresh product list and category datalist together */
 async function refreshProductsList(){
   try{
     setStatus("Loading products from GitHub…");
     const { arr } = await loadProductsJson();
     renderProductsAdmin(arr);
+    await refreshCategoryDatalist();
     setStatus("Ready.");
-  }catch(err){
-    log("Load list error: " + err.message);
-    setStatus("Error loading list.");
-  }
+  }catch(err){ log("Load list error: " + err.message); setStatus("Error loading list."); }
 }
 
+/* Export/Import */
 exportBtn.addEventListener('click', async ()=>{
   try{
     const { arr } = await loadProductsJson();
@@ -888,7 +780,6 @@ exportBtn.addEventListener('click', async ()=>{
     URL.revokeObjectURL(a.href);
   }catch(err){ alert('Export failed: '+err.message); }
 });
-
 importBtn.addEventListener('click', ()=> importInput.click());
 importInput.addEventListener('change', async (e)=>{
   const file = e.target.files?.[0];
@@ -900,19 +791,14 @@ importInput.addEventListener('change', async (e)=>{
     if(!Array.isArray(data)) throw new Error('JSON must be an array');
     const { sha } = await loadProductsJson();
     await ghPutContents(currentCfg().productsPath, toBase64Utf8(JSON.stringify(data,null,2)), `Import products.json`, sha||undefined, currentCfg());
-    
-    // TRIGGER SITE DEPLOYMENT
-    log("Triggering site deployment after import");
     await triggerSiteDeployment();
-    
     alert('Imported and site deployment triggered.');
     await refreshProductsList();
   }catch(err){ alert('Import failed: '+err.message); }
 });
 
-/* Token / Session buttons - UPDATED WITH MODAL */
+/* Token / Session buttons */
 setTokenBtn.addEventListener('click', showTokenModal);
-
 setSessionBtn.addEventListener('click', ()=>{
   if(confirm('Use sessionStorage? Your token will clear when you close the tab.')){
     sessionStorage.setItem(SESSION_ONLY_KEY,'1');
@@ -921,61 +807,38 @@ setSessionBtn.addEventListener('click', ()=>{
     tokenOk();
   }
 });
-
 clearTokenBtn.addEventListener('click', ()=>{
   localStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
   tokenOk("No token");
 });
 
-/* Token modal event listeners */
+/* Token modal events */
 closeTokenModal.addEventListener('click', hideTokenModal);
 cancelTokenBtn.addEventListener('click', hideTokenModal);
 saveTokenBtn.addEventListener('click', saveTokenFromModal);
+tokenModal.addEventListener('click', (e) => { if (e.target === tokenModal) hideTokenModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tokenModal.style.display === 'flex') hideTokenModal(); });
 
-// Close modal when clicking outside of it
-tokenModal.addEventListener('click', (e) => {
-  if (e.target === tokenModal) {
-    hideTokenModal();
-  }
-});
-
-// Handle Escape key to close modal
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && tokenModal.style.display === 'flex') {
-    hideTokenModal();
-  }
-});
-
-/* Config bind + load */
+/* Config initial load */
 (function initCfg(){
   const cfg = loadCfg();
-  cfgOwner.value = cfg.owner;
-  cfgRepo.value = cfg.repo;
-  cfgBranch.value = cfg.branch;
-  cfgProducts.value = cfg.productsPath;
-  cfgImages.value = cfg.imagesDir;
-  cfgMaxPx.value = cfg.maxImagePx;
+  cfgOwner.value = cfg.owner; cfgRepo.value = cfg.repo; cfgBranch.value = cfg.branch;
+  cfgProducts.value = cfg.productsPath; cfgImages.value = cfg.imagesDir; cfgMaxPx.value = cfg.maxImagePx;
 })();
+[cfgOwner,cfgRepo,cfgBranch,cfgProducts,cfgImages,cfgMaxPx].forEach(el=> el.addEventListener('change', ()=> saveCfg(currentCfg())));
 
-[cfgOwner,cfgRepo,cfgBranch,cfgProducts,cfgImages,cfgMaxPx].forEach(el=>{
-  el.addEventListener('change', ()=> saveCfg(currentCfg()));
-});
+/* Refresh categories button */
+refreshCategoriesBtn.addEventListener('click', refreshCategoryDatalist);
 
 /* Init */
 tokenOk();
 renderFiles();
 refreshBtn.addEventListener('click', refreshProductsList);
 refreshProductsList();
-
-/* Initial message */
-log("Orji Supplies Admin Panel initialized");
+log("Orji Supplies Admin Panel (editable categories) initialized");
 log("Target website: " + TARGET_SITE);
-if (DEPLOY_WEBHOOK) {
-  log("Automatic deployment configured");
-} else {
-  log("Note: No deployment webhook configured. Set DEPLOY_WEBHOOK in the code to enable automatic site updates.");
-}
+if (!DEPLOY_WEBHOOK) log("Note: No deployment webhook configured.");
 </script>
 </body>
 </html>
